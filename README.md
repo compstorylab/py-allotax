@@ -17,65 +17,41 @@ Table of contents:
 1. Requires `python3.11` or greater.
 
 1. If JavaScript tool installs are needed (never used or installed `npm`, `nvm`, `node`):
-    1. Here are the recommended [steps to install `nvm`](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating). `nvm` is a node version manager that streamlines installing the other 2.
+    1. [Install `nvm`](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating). `nvm` is a node version manager that streamlines installing the other 2.
     - Otherwise (not recommended): [steps to individually install `node` and `npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 1. Once you have `nvm`, install the latest of both `node` and `npm` with:
     ```bash
     nvm install --lts
     ```
-1. One package depends on having Chrome (brower) or Chromium (browser driver) installed. **If you have Chrome installed, you can skip this step**. Otherwise, install Chrome or Chromium.
+1. Install Chrome or Chromium because one package depends on having Chrome (brower) or Chromium (browser driver). **If you have Chrome installed, skip this step**.
 
-1. Activate your desired python environment then
+1. Activate your desired python environment.
+
+1. Install package:
     ```bash
     pip3 install py-allotax
     ```
 
 ## Usage instructions
 
-### Package
-If working in a python notebook or script, you can install the package and use the function directly. Example data can be downloaded from the `example_data` directory to run the example below and those found in the `examples.ipynb`. [boys 2022](example_data/boys_2022.csv) and [boys 2023](example_data/boys_2023.json) are the examples used below.
+If working in a python notebook or script, you can install the package and use the function directly. Example data must be downloaded from the `example_data` directory to run the example below and those found in the `examples.ipynb`. [boys 2022](example_data/boys_2022.csv) and [boys 2023](example_data/boys_2023.json) are the examples used below.
 
 ```python
 import os
 from py_allotax.generate_svg import generate_svg
+
 data_path1 = os.path.join("example_data", "boys_2022.json")
 data_path2 = os.path.join("example_data", "boys_2023.json")
+
 generate_svg(data_path1, data_path2, "test.pdf", "0.17", "Boys 2022", "Boys 2023")
 ```
 
 If running the example, you can check your result against the [example output](example_charts).
 
+To get help, you can run `?py_allotax.generate_svg.generate_svg` in a notebook cell to see argument descriptions.
 
-### CLI
+*Note*: Your own data must be in the `.json` format (see json examples in `example_data/`). If you have a `.csv` file, you can convert it to `.json` using `utils.convert_csv_data` (see `examples.ipynb`).
 
-1. Clone the GitHub repository.
-1. Verify your data is in the required format (`.json`) by seeing json examples in `example_data/`.
-    - See helper functions in `utils` to convert among `csv`, `json`, and `js` formats.
-    - The method `utils.convert_csv_data` exists to convert your data from `.csv` to `.json` if needed--see `examples.ipynb`.
-1. Add your 2 system's files. You need 2 `data.json` files, one for each system.
-
-Verify this test against `example_charts/test.pdf`.
-
-
-To get help, you can run the following `python src/py_allotax/generate_svg.py --help`. It will show the following:
-```
-usage: generate_svg.py [-h] [--desired_format {pdf,html}] json_file_1 json_file_2 output_file alpha title1 title2
-
-Generate allotaxonometer plot.
-
-positional arguments:
-  json_file_1           Path to the first json data file.
-  json_file_2           Path to the second json data file.
-  output_file           Path to save the output pdf file.
-  alpha                 Alpha value.
-  title1                Title of system 1
-  title2                Title of system 2.
-
-options:
-  -h, --help            show this help message and exit
-  --desired_format {pdf,html}
-                        Desired output format (default: pdf).
-```
 
 ## Developer Notes
 ### Dependency Manager
