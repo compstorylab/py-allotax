@@ -89,7 +89,7 @@ Will any data format work?
 - There are specific column/variable names, and the data must be in `.json` format. The column names and formats vary across a few of the allotaxonometer tools, so there is a data format conversion function in `utils.py` to go from `.csv` to `.json`. See `examples.ipynb` for how to convert your data from `.csv` to `.json`.
 
 I use Google colab or online-based coding environments only.
-- Currently, this tool is a repo (not yet a package) and its dependencies may be difficult to install in an online environment. We recommend using Python virtual environments or Anaconda to create and manage Python environments locally. See below some shell instructions to get started with a Python virtual environment.
+- Currently, this tool's dependencies may be difficult to install in an online environment. We recommend using Python virtual environments or Anaconda to create and manage Python environments locally. See below some shell instructions to get started with a Python virtual environment.
 
     <details>
     <summary>Click for Python virtual environment instructions</summary>
@@ -107,10 +107,7 @@ I use Google colab or online-based coding environments only.
             ```
             source /replace-wth-path-to/name_of_env/bin/activate
             ```
-        - Now you can install the python packages needed or do other library management (type `pip help` for more commands):
-            ```
-            pip3 install pandas pyhtml2pdf selenium==4.25.0
-            ```
+        - Now you can install the python packages needed or do other library management (type `pip help` for more commands).
     - You are set up to use a coding application (IDE) or command line to run this tool. If you do not have Anaconda, we recommend VS Code (where you can work with `.ipynb` files as you might in Jupyter or Colab).
     </details>
 
