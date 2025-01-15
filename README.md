@@ -130,9 +130,6 @@ I am receiving this error: `AttributeError: 'ChromiumRemoteConnection' object ha
 I am receiving an `npm` error regarding `canvas`, `pixman`, or other packages I do not recognize.
 - You may need `canvas` and its dependencies. Please follow [this guide](https://www.npmjs.com/package/canvas#compiling) to installing it based on your OS.
 
-Other packages are erring out or not installing.
-- We will eventually package this repo and streamline installation.
-
 
 <br>
 <br>
@@ -155,3 +152,4 @@ Users accessing these tools is our primary goal, so feel free to contact us by s
 - [Allotaxonometer main package](https://github.com/jstonge/allotaxonometer)
 - [Allotaxonometer web app](https://allotax.vercel.app/)
 - The work and paper leading to these tools is [here](https://doi.org/10.1140/epjds/s13688-023-00400-x).
+- See the [allo diagram]() to understand the full tool ecosystem around the allotaonometer (download and load in draw.io)
