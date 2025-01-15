@@ -26,7 +26,7 @@ Table of contents:
 1. One package depends on having Chrome (brower) or Chromium (browser driver) installed. **If you have Chrome installed, you can skip this step**. Otherwise, install Chrome or Chromium.
 
 1. Activate your desired python environment then
-```bash
+    ```bash
     pip3 install py-allotax
     ```
 
