@@ -17,65 +17,41 @@ Table of contents:
 1. Requires `python3.11` or greater.
 
 1. If JavaScript tool installs are needed (never used or installed `npm`, `nvm`, `node`):
-    1. Here are the recommended [steps to install `nvm`](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating). `nvm` is a node version manager that streamlines installing the other 2.
+    1. [Install `nvm`](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating). `nvm` is a node version manager that streamlines installing the other 2.
     - Otherwise (not recommended): [steps to individually install `node` and `npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 1. Once you have `nvm`, install the latest of both `node` and `npm` with:
     ```bash
     nvm install --lts
     ```
-1. One package depends on having Chrome (brower) or Chromium (browser driver) installed. **If you have Chrome installed, you can skip this step**. Otherwise, install Chrome or Chromium.
+1. Install Chrome or Chromium because one package depends on having Chrome (brower) or Chromium (browser driver). **If you have Chrome installed, skip this step**.
 
-1. Activate your desired python environment then
-```bash
+1. Activate your desired python environment.
+
+1. Install package:
+    ```bash
     pip3 install py-allotax
     ```
 
 ## Usage instructions
 
-### Package
-If working in a python notebook or script, you can install the package and use the function directly. Example data can be downloaded from the `example_data` directory to run the example below and those found in the `examples.ipynb`. [boys 2022](example_data/boys_2022.csv) and [boys 2023](example_data/boys_2023.json) are the examples used below.
+If working in a python notebook or script, you can install the package and use the function directly. Example data must be downloaded from the `example_data` directory to run the example below and those found in the `examples.ipynb`. [boys 2022](example_data/boys_2022.csv) and [boys 2023](example_data/boys_2023.json) are the examples used below.
 
 ```python
 import os
 from py_allotax.generate_svg import generate_svg
+
 data_path1 = os.path.join("example_data", "boys_2022.json")
 data_path2 = os.path.join("example_data", "boys_2023.json")
+
 generate_svg(data_path1, data_path2, "test.pdf", "0.17", "Boys 2022", "Boys 2023")
 ```
 
 If running the example, you can check your result against the [example output](example_charts).
 
+To get help, you can run `?py_allotax.generate_svg.generate_svg` in a notebook cell to see argument descriptions.
 
-### CLI
+*Note*: Your own data must be in the `.json` format (see json examples in `example_data/`). If you have a `.csv` file, you can convert it to `.json` using `utils.convert_csv_data` (see `examples.ipynb`).
 
-1. Clone the GitHub repository.
-1. Verify your data is in the required format (`.json`) by seeing json examples in `example_data/`.
-    - See helper functions in `utils` to convert among `csv`, `json`, and `js` formats.
-    - The method `utils.convert_csv_data` exists to convert your data from `.csv` to `.json` if needed--see `examples.ipynb`.
-1. Add your 2 system's files. You need 2 `data.json` files, one for each system.
-
-Verify this test against `example_charts/test.pdf`.
-
-
-To get help, you can run the following `python src/py_allotax/generate_svg.py --help`. It will show the following:
-```
-usage: generate_svg.py [-h] [--desired_format {pdf,html}] json_file_1 json_file_2 output_file alpha title1 title2
-
-Generate allotaxonometer plot.
-
-positional arguments:
-  json_file_1           Path to the first json data file.
-  json_file_2           Path to the second json data file.
-  output_file           Path to save the output pdf file.
-  alpha                 Alpha value.
-  title1                Title of system 1
-  title2                Title of system 2.
-
-options:
-  -h, --help            show this help message and exit
-  --desired_format {pdf,html}
-                        Desired output format (default: pdf).
-```
 
 ## Developer Notes
 ### Dependency Manager
@@ -113,7 +89,7 @@ Will any data format work?
 - There are specific column/variable names, and the data must be in `.json` format. The column names and formats vary across a few of the allotaxonometer tools, so there is a data format conversion function in `utils.py` to go from `.csv` to `.json`. See `examples.ipynb` for how to convert your data from `.csv` to `.json`.
 
 I use Google colab or online-based coding environments only.
-- Currently, this tool is a repo (not yet a package) and its dependencies may be difficult to install in an online environment. We recommend using Python virtual environments or Anaconda to create and manage Python environments locally. See below some shell instructions to get started with a Python virtual environment.
+- Currently, this tool's dependencies may be difficult to install in an online environment. We recommend using Python virtual environments or Anaconda to create and manage Python environments locally. See below some shell instructions to get started with a Python virtual environment.
 
     <details>
     <summary>Click for Python virtual environment instructions</summary>
@@ -131,10 +107,7 @@ I use Google colab or online-based coding environments only.
             ```
             source /replace-wth-path-to/name_of_env/bin/activate
             ```
-        - Now you can install the python packages needed or do other library management (type `pip help` for more commands):
-            ```
-            pip3 install pandas pyhtml2pdf selenium==4.25.0
-            ```
+        - Now you can install the python packages needed or do other library management (type `pip help` for more commands).
     - You are set up to use a coding application (IDE) or command line to run this tool. If you do not have Anaconda, we recommend VS Code (where you can work with `.ipynb` files as you might in Jupyter or Colab).
     </details>
 
@@ -153,9 +126,6 @@ I am receiving this error: `AttributeError: 'ChromiumRemoteConnection' object ha
 
 I am receiving an `npm` error regarding `canvas`, `pixman`, or other packages I do not recognize.
 - You may need `canvas` and its dependencies. Please follow [this guide](https://www.npmjs.com/package/canvas#compiling) to installing it based on your OS.
-
-Other packages are erring out or not installing.
-- We will eventually package this repo and streamline installation.
 
 
 <br>
@@ -179,3 +149,4 @@ Users accessing these tools is our primary goal, so feel free to contact us by s
 - [Allotaxonometer main package](https://github.com/jstonge/allotaxonometer)
 - [Allotaxonometer web app](https://allotax.vercel.app/)
 - The work and paper leading to these tools is [here](https://doi.org/10.1140/epjds/s13688-023-00400-x).
+- See the [allo diagram]() to understand the full tool ecosystem around the allotaonometer (download and load in draw.io)
