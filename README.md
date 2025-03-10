@@ -1,6 +1,18 @@
 # Allotaxonometer through Python
 
-The `py-allotax` implements a python interface to the `allotaxonometer` library. The tool here provides a way for users to input data and arguments and receive back a saved plot! The tool is designed to be used in a command line or in a python notebook in a few lines of code (see usage instructions at the bottom).
+
+<p align="center">
+  <img src="Allotax.png" alt="Allotax icon" width="300px"/>
+</p>
+<p align="center" style="font-size: 10px; color: gray;">
+  <i>Allotax icon created by Julia W. Zimmerman</i>
+</p>
+
+The `py-allotax` implements a python interface to the `allotaxonometer` library. This tool provides a way for users to input data and arguments and receive back a saved plot! The tool is designed to be used in a command line or in a python notebook in a few lines of code (see usage instructions at the bottom).
+
+
+<div style="clear: both;"></div>
+<br>
 
 Table of contents:
 - [Installation](#installation)
@@ -149,4 +161,4 @@ Users accessing these tools is our primary goal, so feel free to contact us by s
 - [Allotaxonometer main package](https://github.com/jstonge/allotaxonometer)
 - [Allotaxonometer web app](https://allotax.vercel.app/)
 - The work and paper leading to these tools is [here](https://doi.org/10.1140/epjds/s13688-023-00400-x).
-- See the [allo diagram]() to understand the full tool ecosystem around the allotaonometer (download and load in draw.io)
+- See the [allo diagram]() to understand the full tool ecosystem around the allotaxonometer (download and load in draw.io)

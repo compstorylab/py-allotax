@@ -1,6 +1,6 @@
 #!/bin/bash
 # Check for Docker or Podman
-if dokcer info &> /dev/null; then
+if docker info &> /dev/null; then
     CONTAINER_ENGINE="docker"
 elif podman info &> /dev/null; then
     CONTAINER_ENGINE="podman"
