@@ -97,6 +97,9 @@ You should see a `.whl` file in the newly created `dist` directory.
 
 ## Frequent questions or issues
 
+How much data can I run in this tool?
+- The py-allotax supports approximately 2 GB of data. We recommend checking the size of your data file.
+
 Will any data format work?
 - There are specific column/variable names, and the data must be in `.json` format. The column names and formats vary across a few of the allotaxonometer tools, so there is a data format conversion function in `utils.py` to go from `.csv` to `.json`. See `examples.ipynb` for how to convert your data from `.csv` to `.json`.
 
