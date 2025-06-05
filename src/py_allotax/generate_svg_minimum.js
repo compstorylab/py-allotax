@@ -20,13 +20,14 @@ import createAllotaxChart from './AllotaxChart.js';
   // Use require to load the JavaScript module
   const tempData = await import(tempFilePath);
   const { data1, data2, alpha, title1, title2 } = tempData;
-  
+
   // Create a D3.js SVG visualization for each plot
   const diamond_svg = d3.select("#diamondplot svg");
   const legend_svg = d3.select("#legend svg");
   const balance_svg = d3.select("#balance svg");
   const wordshift_svg = d3.select("#wordshift svg");
 
+  // System titles are positioned in the index.html
   d3.select("#title1").text(title1);
   d3.select("#title2").text(title2);
 
