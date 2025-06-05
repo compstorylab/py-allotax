@@ -2,7 +2,9 @@ import * as d3 from "d3";
 
 import { alpha_norm_type2, rin } from 'allotaxonometer';
 
-export default function DiamondChart(dat, alpha, divnorm, { 
+import { alloColors } from '../aesthetics.js';
+
+export default function DiamondChart(dat, alpha, divnorm, {
   title,
   maxlog10,
   DiamondHeight = 600,
@@ -10,37 +12,37 @@ export default function DiamondChart(dat, alpha, divnorm, {
   marginDiamond = 40,
   passed_svg
  } = {}) {
-  
+
   const draw_polygon = (g, tri_coords, bg_color) => g
         .append("polygon")
-         .attr("fill",bg_color)
-         .attr("fill-opacity", 0.2)
+         .attr("fill", bg_color)
+         .attr("fill-opacity", 0.8)  // was 0.2, diamond background opacity
          .attr("stroke", "black")
-         .attr("stroke-width", 1)
+         .attr("stroke-width", 0.5)
          .attr("points", tri_coords)
-  
-  
-  const innerHeight = DiamondHeight - marginInner;   
+
+
+  const innerHeight = DiamondHeight - marginInner;
   const diamondHeight = innerHeight - marginDiamond;
-     
+
   const ncells = d3.max(dat, d => d.x1)
-  const max_rank = d3.max(dat, (d) => d.rank_L[1]); 
+  const max_rank = d3.max(dat, (d) => d.rank_L[1]);
   const rounded_max_rank = 10**Math.ceil(Math.max(Math.log10(max_rank)))
   const relevant_types = chosen_types(dat, ncells)
   const xyDomain = [1, rounded_max_rank];
-     
-     
+
+
   const xy         = d3.scaleBand().domain(dat.map(d=>d.y1)).range([0, diamondHeight])
-  
+
   const logScale = d3.scaleLog().domain(xyDomain).range([0, innerHeight]).nice()
   const linScale = d3.scaleLinear().domain([0,ncells-1]).range([0, innerHeight])
-  const color_scale = d3.scaleSequentialLog().domain([rounded_max_rank, 1]).interpolator(d3.interpolateInferno)     
-         
+  const color_scale = d3.scaleSequentialLog().domain([rounded_max_rank, 1]).interpolator(d3.interpolateInferno)
+
   // Background polygons
   const grey_triangle = [[innerHeight, innerHeight], [0, 0], [innerHeight, 0]].join(" ")
   const blue_triangle = [[innerHeight, innerHeight], [0, 0], [0, innerHeight]].join(" ")
 
-  
+
   // SVG container and transformations
   if (passed_svg === undefined) passed_svg = d3.create("svg");
 
@@ -59,7 +61,8 @@ export default function DiamondChart(dat, alpha, divnorm, {
           .attr('dy', 5)
           .attr('dx', 15)
           .attr('transform', 'scale(-1,1) rotate(45)')
-          .attr('font-size', 10);
+          .attr('font-size', 12)
+          .attr('font-family', 'Times, serif');
 
   const yAxis = (g, scale) => g
         .call(d3.axisLeft(scale))
@@ -69,32 +72,33 @@ export default function DiamondChart(dat, alpha, divnorm, {
           .attr('dx', 2)
           .attr('dy', 13)
           .attr('transform', 'rotate(45)')
-          .attr('font-size', 10);
-  
+          .attr('font-size', 12)
+          .attr('font-family', 'Times, serif');
+
 
 const xAxisLab = (g, x, text, dy, alpha) => g
       .append("text")
         .attr("x", x)
         .attr("dy", dy)
-        .attr("fill", "black")
-        .attr("font-size", 14)
+        .attr("fill", alloColors.css.darkergrey)
+        .attr("font-size", 16)
         .attr("opacity", alpha)
         .attr("text-anchor", 'middle')
         .text(text)
           .attr('transform', `scale(-1,1) translate(-${innerHeight}, 0)`);
 
-  
+
   const yAxisLab = (g, x, text, dy, alpha) => g
       .append("text")
         .attr("x", x)
         .attr("dy", dy)
-        .attr("fill", "black")
-        .attr("font-size", 14)
+        .attr("fill", alloColors.css.darkergrey)
+        .attr("font-size", 16)
         .attr("opacity", alpha)
         .attr("text-anchor", 'middle')
         .text(text)
           .attr('transform', `rotate(90)`);
-  
+
 
   const xGrid = (g, scale, ncells) => g
       .append('g')
@@ -105,7 +109,7 @@ const xAxisLab = (g, x, text, dy, alpha) => g
       .call((g) => g.select(".domain").remove())
       .call((g) => g
           .selectAll(".tick line")
-          .attr("stroke", "#d3d3d3")
+          .attr("stroke", alloColors.css.grey)
             .style("stroke-dasharray", ("3, 3"))
           .attr("y1", -innerHeight+10) // y1 == - ? longer ylines on the top : shorter ylines on the top?
       );
@@ -118,7 +122,7 @@ const xAxisLab = (g, x, text, dy, alpha) => g
       .call((g) => g.select(".domain").remove())
       .call((g) => g
           .selectAll(".tick line")
-          .attr("stroke", "#d3d3d3")
+          .attr("stroke", alloColors.css.grey)
           .style("stroke-dasharray", ("3, 3"))
           .attr("x2", innerHeight) // x2 == - ?  shorter xlines on the right :  longer xlines on the right
       );
@@ -132,8 +136,9 @@ const xAxisLab = (g, x, text, dy, alpha) => g
       .call(xAxisLab, innerHeight-40, "frequent", 75, 0.8)
       .call(xAxisLab, 40, "← more", 60, 0.8)
       .call(xAxisLab, 40, "frequent", 75, 0.8)
-      .call(xGrid, linScale, ncells);
-  
+      .call(xGrid, linScale, ncells)
+      .attr("font-family", "Times, serif");
+
   g.append('g')
       .call(yAxis, logScale)
       .call(yAxisLab, innerHeight/2, "Rank r", 45, .7)
@@ -143,14 +148,15 @@ const xAxisLab = (g, x, text, dy, alpha) => g
       .call(yAxisLab, innerHeight-40, "frequent", 75, .7)
       .call(yAxisLab, 40, "← less", 60, .7)
       .call(yAxisLab, 40, "frequent", 75, .7)
-      .call(yGrid, linScale, ncells);
+      .call(yGrid, linScale, ncells)
+      .attr("font-family", "Times, serif");
 
 
   // BACKGROUND POLYGONS
 
-  draw_polygon(g, blue_triangle, "#89CFF0")
-  draw_polygon(g, grey_triangle, "grey")
-  
+  draw_polygon(g, blue_triangle, alloColors.css.paleblue)  // was "#89CFF0"
+  draw_polygon(g, grey_triangle, alloColors.css.lightgrey)  // was "grey"
+
   // CONTOUR LINES
 
   const mycontours = get_contours(alpha, maxlog10, divnorm)
@@ -158,24 +164,24 @@ const xAxisLab = (g, x, text, dy, alpha) => g
 
   const x = d3.scaleLinear([0, maxlog10], [0, innerHeight])
   const y = d3.scaleLinear([maxlog10, 0], [innerHeight, 0])
-  
+
   const pathData = d3.line()
         .x((d, i) => x(d[0]))
         .y((d, i) => y(d[1]));
-  
+
    g.append("g")
         .attr("fill", "none")
-        .attr("stroke", "grey")
+        .attr("stroke", alloColors.css.verydarkgrey)
       .selectAll("path")
         .data(mycontours)
         .enter() // Enter selection to create paths
         .append("path")
         .attr("d", pathData)  // use path for more granularity
-        .attr("stroke-width", 0.9)
+        .attr("stroke-width", 0.25)
         .attr("stroke-opacity", 0.9);
 
     // Heatmap ----------------------------------
-  
+
     const cells = g
         .selectAll('rect').data(dat).enter()
         .append('rect')
@@ -185,7 +191,7 @@ const xAxisLab = (g, x, text, dy, alpha) => g
         .attr('height', xy.bandwidth())
         .attr('fill', (d) => color_scale(d.value))
         .attr('fill-opacity', (d) => d.value === 0 ? 0 : color_scale(d.value))
-        .attr('stroke', 'black')
+        .attr('stroke', alloColors.css.verydarkgrey)
         .attr('stroke-width', (d) => d.value === 0 ? 0 : 0.1)
         .attr('stroke-opacity', (d) => d.value === 0 ? 0 : 0.9)
 
@@ -198,21 +204,22 @@ const xAxisLab = (g, x, text, dy, alpha) => g
         .attr("x", (d) => xy(d.x1))
         .attr("y", (d) => Number.isInteger(d.coord_on_diag) ? xy(d.y1) : xy(d.y1)-1) // avoid text occlusion
         .attr("dy", 20)
-        .attr("font-size", 10)
-        .attr("font-family", "sans-serif")
+        .attr("fill", alloColors.css.verydarkgrey)
+        .attr("font-size", 12)
+        .attr("font-family", "Times, serif")
         .attr("transform", d => `scale(1,-1) rotate(-90) rotate(-45, ${xy(d.x1)}, ${xy(d.y1)}) translate(${d.which_sys === "right" ? xy(Math.sqrt(d.cos_dist))*1.5 : -xy(Math.sqrt(d.cos_dist))*1.5}, 0)`) // little humph
         .attr("text-anchor", d => d.x1 - d.y1 <= 0 ? "start" : "end");
 
     // Draw the middle line
     g.append('line')
-     .style("stroke", "black")
-     .style("stroke-width", 1)
+     .style("stroke", alloColors.css.verydarkgrey)
+     .style("stroke-width", 0.5)
      .attr("x1", 0)
      .attr("y1", 0)
      .attr("x2", innerHeight-7)
      .attr("y2", innerHeight-7)
 
-  
+
   return g.node();
 }
 
@@ -222,8 +229,8 @@ function filter_contours(tmpcontours, Ninset, maxlog10) {
   const chart2val = d3.scaleLinear()
     .domain([0, Ninset]) // unit: km
     .range([0, maxlog10]) // unit: pixels
-    
-  let out = []  
+
+  let out = []
   // Extract Coordinates:
   tmpcontours.forEach((contour) => {
     contour.coordinates.forEach((pair, i) => {
@@ -237,10 +244,10 @@ function filter_contours(tmpcontours, Ninset, maxlog10) {
       for (let index = 0; index < tmpr1.length-1; index++) {
         const x1 = chart2val(tmpr1[index]);
         const x2 = chart2val(tmpr2[index]);
-        
-        // Calculate tmpxrot 
+
+        // Calculate tmpxrot
         const tmpxrot = Math.abs(x2 - x1) / Math.sqrt(2);
-        
+
         // If the condition is met, add the coordinate pair [x1, x2] to `filteredPairs`
         if (Math.abs(tmpxrot) >= 0.1 & x1 != maxlog10 & x2 != 0 & x1 != 0 & x2 != maxlog10) {
           filteredPairs.push([x1, x2]);
@@ -259,9 +266,9 @@ return out
 function make_grid(Ninset, tmpr1, tmpr2, alpha, divnorm) {
   // No matrix in js :(
   // we could try to do like in the original d3.contour, where they do
-  // calculation to work with a flat array. 
+  // calculation to work with a flat array.
   // Instead we flatten that List of list later.
-  
+
   const deltamatrix = Array.from({ length: Ninset }, () => Array(Ninset).fill(0));
 
   // Populate deltamatrix with alpha_norm_type2 values and set the diagonal and adjacent values
@@ -298,7 +305,7 @@ function get_contours(alpha, maxlog10, divnorm) {
     .domain([0, Ncontours + 1])
     .range([1, tmpr1.length]);
 
-  
+
   const contour_indices = d3.range(Ncontours + 2).map(i => Math.round(scale(i)));
   const grid = make_grid(Ninset, tmpr1, tmpr2, alpha, divnorm)
   const indices = contour_indices.slice(1, -1);
@@ -309,16 +316,16 @@ function get_contours(alpha, maxlog10, divnorm) {
   // we first create a generator
   // then we pass to Z (flatDeltamatrix)
   const logTmpr = tmpr1.map(Math.log10)
-  
+
   const contourGenerator = d3.contours()
       .size([logTmpr.length, logTmpr.length])  // Set the grid size
       .thresholds(heights); // I guess this is equivalent? These are levels.
 
   const flatDeltamatrix = grid.flat();
-  const tmpcontours = contourGenerator(flatDeltamatrix);  
+  const tmpcontours = contourGenerator(flatDeltamatrix);
 
   return filter_contours(tmpcontours, Ninset, maxlog10)
-  
+
 }
 
 function chosen_types(dat, ncells) {

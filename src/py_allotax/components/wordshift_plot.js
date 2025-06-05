@@ -20,7 +20,7 @@ export default function WordShiftChart(data, {
   yRange, // [top, bottom]
   colors = ['lightgrey', 'lightblue'], // [negative, …, positive] colors
   passed_svg,
-} = {}) { 
+} = {}) {
 
 // REMOVE PASSED_SVG
 
@@ -56,7 +56,6 @@ if (title === undefined) {
   const O = d3.map(data, d => d);
   const T = title;
   title = i => T(O[i], i, data);
-
 }
 
 if (passed_svg === undefined) passed_svg = d3.create("svg");
@@ -79,7 +78,9 @@ const g = passed_svg
         .attr("y", -22)
         .attr("fill", "currentColor")
         .attr("text-anchor", "center")
-        .text(xLabel));
+        .text(xLabel))
+        .attr("font-family", "Times, serif")
+        .attr("font-size", 14);
 
 const bar = g.append("g")
   .selectAll("rect")
@@ -89,7 +90,9 @@ const bar = g.append("g")
     .attr("x", i => Math.min(xScale(0), xScale(X[i])))
     .attr("y", i => yScale(Y[i]))
     .attr("width", i => Math.abs(xScale(X[i]) - xScale(0)))
-    .attr("height", yScale.bandwidth());
+    .attr("height", yScale.bandwidth())
+    .attr("font-family", "Times, serif")
+    .attr("font-size", 12);
 
 if (title) bar.append("title")
     .text(title);
@@ -101,7 +104,9 @@ g.append("g")
     .call(g => g.selectAll(".tick text")
       .filter(y => YX.get(y) > 0 ? -YX.get(y) : YX.get(y))
         .attr("text-anchor", y => YX.get(y) > 0 ? "start" : "end" )
-        .attr("x",  y => YX.get(y) > 0 ? 6 : -6 ));
+        .attr("x",  y => YX.get(y) > 0 ? 6 : -6 ))
+        .attr("font-family", "Times, serif")
+        .attr("font-size", 12);
 
   return g.node(); // RETURN SVG
 }
