@@ -38,10 +38,13 @@ export default function myLegend(max_count_log, {
      .join("rect")
        .attr("x", (d) => (x(d)))
        .attr("y", marginTop)
-       .attr("width", Math.max(0, x.bandwidth() - 1))
-       .attr("height", height - marginTop - marginBottom)
+       .attr("width", Math.max(0, x.bandwidth()))
+       .attr("height", x.bandwidth())
        .attr("fill", color)
-       .attr("transform", "rotate(-90) translate(-70,0)");
+       .attr("transform", "rotate(-90) translate(-70,0)")
+       .attr("stroke", "black")
+       .attr("stroke-width", 0.65)
+       .attr("shape-rendering", "crispEdges");  // prevents anti-alias blur in some browsers
 
     // let x2;
     let x2 = d3.scaleBand()
