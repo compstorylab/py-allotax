@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { JSDOM } from 'jsdom';
 import createAllotaxChart from './AllotaxChart.js';
+import { alloColors } from './aesthetics.js';
 
 (async () => {
   // Dynamically import d3
@@ -28,8 +29,8 @@ import createAllotaxChart from './AllotaxChart.js';
   const wordshift_svg = d3.select("#wordshift svg");
 
   // System titles are positioned in the index.html
-  d3.select("#title1").text(title1);
-  d3.select("#title2").text(title2);
+  d3.select("#title1").text(title1).style("color", alloColors.css.superdarkgrey);
+  d3.select("#title2").text(title2).style("color", alloColors.css.superdarkgrey);
 
   // Create the allotaxChart instance with the provided data and arguments
   await createAllotaxChart(data1, data2, alpha, title1, title2, { diamond_svg, wordshift_svg, legend_svg, balance_svg });

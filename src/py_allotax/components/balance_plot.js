@@ -21,7 +21,7 @@ export default function BalanceChart(data, {
   yPadding = 0.5, // amount of y-range to reserve to separate bars
   yDomain, // an array of (ordinal) y-values
   yRange, // [top, bottom]
-  colors =  ['lightgrey', 'lightblue'], // [negative, …, positive] colors
+  colors =  [alloColors.css.lightgrey, alloColors.css.paleblue],
   passed_svg
   } = {}) {
     // Compute values.

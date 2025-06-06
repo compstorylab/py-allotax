@@ -154,13 +154,13 @@ const xAxisLab = (g, x, text, dy, alpha) => g
 
   // BACKGROUND POLYGONS
 
-  draw_polygon(g, blue_triangle, alloColors.css.paleblue)  // was "#89CFF0"
-  draw_polygon(g, grey_triangle, alloColors.css.lightgrey)  // was "grey"
+  draw_polygon(g, blue_triangle, alloColors.css.paleblue)
+  draw_polygon(g, grey_triangle, alloColors.css.lightgrey)
 
+  
   // CONTOUR LINES
 
   const mycontours = get_contours(alpha, maxlog10, divnorm)
-
 
   const x = d3.scaleLinear([0, maxlog10], [0, innerHeight])
   const y = d3.scaleLinear([maxlog10, 0], [innerHeight, 0])

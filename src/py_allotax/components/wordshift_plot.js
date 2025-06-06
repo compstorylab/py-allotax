@@ -1,112 +1,163 @@
 import * as d3 from "d3";
+import { alloColors } from "../aesthetics.js";
 
 export default function WordShiftChart(data, {
-  x = d => d, // given d in data, returns the (quantitative) x-value
-  y = (d, i) => i, // given d in data, returns the (ordinal) y-value
-  title, // given d in data, returns the title text
-  marginTop = 30, // top margin, in pixels
-  marginRight = 40, // right margin, in pixels
-  marginBottom = 10, // bottom margin, in pixels
-  marginLeft = 40, // left margin, in pixels
-  width = 300, // outer width of chart, in pixels
-  height = 680, // the outer height of the chart, in pixels
-  xType = d3.scaleLinear, // type of x-scale
-  xDomain, // [xmin, xmax]
-  xRange = [marginLeft, width - marginRight], // [left, right]
-  xFormat = '%', // a format specifier string for the x-axis
-  xLabel = '← System 1 · Divergence contribution · System 2 →', // a label for the x-axis
-  yPadding = 0.2, // amount of y-range to reserve to separate bars
-  yDomain, // an array of (ordinal) y-values
-  yRange, // [top, bottom]
-  colors = ['lightgrey', 'lightblue'], // [negative, …, positive] colors
+  x = d => d,
+  y = (d, i) => i,
+  title,
+  marginTop = 50,
+  marginRight = 60,
+  marginBottom = 40,
+  marginLeft = 70,
+  width = 360,
+  height,
+  xType = d3.scaleLinear,
+  xDomain,
+  xFormat = '%',
+  xLabel = '← System 1 · Divergence contribution · System 2 →',
+  yPadding = 0,
+  yDomain,
+  colors = [alloColors.css.lightgrey, alloColors.css.paleblue],
   passed_svg,
 } = {}) {
+  const xAxisYOffset = 10; // Space below x-axis
 
-// REMOVE PASSED_SVG
+  // Compute values
+  const X = d3.map(data, x);
+  const Y = d3.map(data, y);
 
-  // Compute values.
-const X = d3.map(data, x);
-const Y = d3.map(data, y);
+  if (xDomain === undefined) xDomain = d3.extent(X);
+  if (yDomain === undefined) yDomain = Y;
+  yDomain = new d3.InternSet(yDomain);
 
-// Compute default domains, and unique the y-domain.
-if (xDomain === undefined) xDomain = d3.extent(X);
-if (yDomain === undefined) yDomain = Y;
-yDomain = new d3.InternSet(yDomain);
+  const I = d3.range(X.length).filter(i => yDomain.has(Y[i]));
+  const YX = d3.rollup(I, ([i]) => X[i], i => Y[i]);
 
-// Omit any data not present in the y-domain.
-// Lookup the x-value for a given y-value.
-const I = d3.range(X.length).filter(i => yDomain.has(Y[i]));
-const YX = d3.rollup(I, ([i]) => X[i], i => Y[i]);
+  const bandHeight = 18;
+  const compactHeight = yDomain.size * bandHeight;
+  const innerWidth = width - marginLeft - marginRight;
+  const innerHeight = compactHeight + xAxisYOffset;
 
-// Compute the default height.
-if (height === undefined) height = Math.ceil((yDomain.size + yPadding) * 25) + marginTop + marginBottom;
-if (yRange === undefined) yRange = [marginTop, height - marginBottom];
+  if (height === undefined) height = innerHeight + marginTop + marginBottom;
 
-// Construct scales, axes, and formats.
-const xScale = xType(xDomain, xRange);
-const yScale = d3.scaleBand(yDomain, yRange).padding(yPadding);
-const xAxis = d3.axisTop(xScale).ticks(width / 80, xFormat);
-const yAxis = d3.axisLeft(yScale).tickSize(0).tickPadding(6);
-const format = xScale.tickFormat(100, xFormat);
+  const xRange = [0, innerWidth];
+  const yRange = [xAxisYOffset, xAxisYOffset + compactHeight];
 
-// Compute titles.
-if (title === undefined) {
-  title = i => `${Y[i]}\n${format(X[i])}`;
-} else if (title !== null) {
-  const O = d3.map(data, d => d);
-  const T = title;
-  title = i => T(O[i], i, data);
-}
+  const xScale = xType(xDomain, xRange);
+  const yScale = d3.scaleBand(yDomain, yRange).padding(yPadding);
+  const xAxis = d3.axisTop(xScale).ticks(width / 80, xFormat);
+  const yAxis = d3.axisLeft(yScale).tickSize(0).tickPadding(3);
+  const format = xScale.tickFormat(100, xFormat);
 
-if (passed_svg === undefined) passed_svg = d3.create("svg");
+  if (title === undefined) {
+    title = i => `${Y[i]}\n${format(X[i])}`;
+  } else if (title !== null) {
+    const O = d3.map(data, d => d);
+    const T = title;
+    title = i => T(O[i], i, data);
+  }
 
-const g = passed_svg
-    .attr("transform", `translate(${marginLeft}, ${marginTop})`)
+  if (passed_svg === undefined) passed_svg = d3.create("svg");
+
+  passed_svg
     .attr("width", width)
     .attr("height", height)
-    .attr("viewBox", [0, 0, width, height]);
+    .attr("viewBox", `0 0 ${width} ${height}`); // allow full visible space
 
+  const shiftSvgBy = 12; // shift svg up to align with system titles
+  const g = passed_svg.append("g")
+    .attr("transform", `translate(${marginLeft}, ${marginTop - shiftSvgBy})`);
+
+  // X-axis group
   g.append("g")
-    .attr("transform", `translate(0,${marginTop})`)
+    .attr("transform", `translate(0,${xAxisYOffset})`)
     .call(xAxis)
     .call(g => g.select(".domain").remove())
     .call(g => g.selectAll(".tick line").clone()
-        .attr("y2", height - marginTop - marginBottom)
-        .attr("stroke-opacity", 0.1))
-    .call(g => g.append("text") // actual title
-        .attr("x", xScale(0))
-        .attr("y", -22)
-        .attr("fill", "currentColor")
-        .attr("text-anchor", "center")
-        .text(xLabel))
-        .attr("font-family", "Times, serif")
-        .attr("font-size", 14);
+      .attr("y2", innerHeight - xAxisYOffset)
+      .attr("stroke-opacity", 0.1))
+    .call(g => g.append("text")
+      .attr("x", xScale(0))
+      .attr("y", -35)
+      .attr("fill", "currentColor")
+      .attr("text-anchor", "middle")
+      .text(xLabel))
+    .attr("font-family", "Times, serif")
+    .attr("font-size", 16)
+    .attr("fill", alloColors.css.verydarkgrey);
 
-const bar = g.append("g")
-  .selectAll("rect")
-  .data(I)
-  .join("rect")
+  // Bars
+  const barHeightFactor = 0.7;
+  const bar = g.append("g")
+    .selectAll("rect")
+    .data(I)
+    .join("rect")
     .attr("fill", i => colors[X[i] > 0 ? colors.length - 1 : 0])
     .attr("x", i => Math.min(xScale(0), xScale(X[i])))
-    .attr("y", i => yScale(Y[i]))
     .attr("width", i => Math.abs(xScale(X[i]) - xScale(0)))
-    .attr("height", yScale.bandwidth())
+    .attr("height", yScale.bandwidth() * barHeightFactor)
+    .attr("y", i => yScale(Y[i]) + (yScale.bandwidth() - yScale.bandwidth() * barHeightFactor) / 2)
     .attr("font-family", "Times, serif")
-    .attr("font-size", 12);
+    .attr("font-size", 14);
 
-if (title) bar.append("title")
-    .text(title);
+  if (title) bar.append("title").text(title);
 
-// name labels on the opposite side of the bar
-g.append("g")
+  // Y-axis
+// Y-axis with split tick labels (name and numbers)
+  g.append("g")
     .attr("transform", `translate(${xScale(0)},0)`)
     .call(yAxis)
     .call(g => g.selectAll(".tick text")
-      .filter(y => YX.get(y) > 0 ? -YX.get(y) : YX.get(y))
-        .attr("text-anchor", y => YX.get(y) > 0 ? "start" : "end" )
-        .attr("x",  y => YX.get(y) > 0 ? 6 : -6 ))
-        .attr("font-family", "Times, serif")
-        .attr("font-size", 12);
+      .each(function(y) {
+        const fullText = y;  // The tick label text, e.g. "Grover (413.5 ⇋ 20)"
 
-  return g.node(); // RETURN SVG
+        // Parse into name and numbers
+        const splitIndex = fullText.indexOf(' ');
+        let name_y, numbers_y;
+        if (splitIndex === -1) {
+          name_y = fullText;
+          numbers_y = "";
+        } else {
+          name_y = fullText.slice(0, splitIndex);
+          numbers_y = fullText.slice(splitIndex + 1).trim();
+          // Strip first and last characters from numbers_y if possible
+          if (numbers_y.length > 2) {
+            numbers_y = numbers_y.slice(1, numbers_y.length - 1);
+          }
+        }
+
+        const xValue = YX.get(y); // value associated with this label
+        const tickGroup = d3.select(this.parentNode);
+
+        // Remove the original text element since we will create two separate texts
+        d3.select(this).remove();
+
+        // Name text on the normal side
+        tickGroup.append("text")
+          .text(name_y)
+          .attr("font-family", "Times, serif")
+          .attr("font-size", 14)
+          .attr("fill", alloColors.css.verydarkgrey)
+          .attr("dy", "0.32em")
+          .attr("x", xValue > 0 ? 6 : -6)
+          .attr("text-anchor", xValue > 0 ? "start" : "end");
+
+        if (numbers_y) {
+          // Numbers text on the opposite side
+          tickGroup.append("text")
+            .text(numbers_y)
+            .attr("font-family", "Times, serif")
+            .attr("font-size", 14)
+            .attr("opacity", 0.5)
+            .attr("fill", alloColors.css.darkergrey)
+            .attr("dy", "0.32em")
+            .attr("x", xValue > 0 ? -6 : 6)
+            .attr("text-anchor", xValue > 0 ? "end" : "start");
+        }
+      }))
+    .attr("font-family", "Times, serif")
+    .attr("font-size", 14);
+
+
+  return passed_svg.node();
 }

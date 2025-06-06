@@ -48,19 +48,24 @@ export default function myLegend(max_count_log, {
        .domain(d3.range(max_count_log).map(i => 10**i).sort(d3.descending))
        .rangeRound([marginLeft-40, width-90]);
 
+
     g.append("g")
-        .call(d3.axisBottom(x2).tickSize(tickSize)).attr("text-anchor", "start")
+        .call(d3.axisBottom(x2).tickSize(tickSize))
+          .attr("text-anchor", "start")
+          .call(g => g.selectAll("text")
+          .style("font-size", "14px"))
+          .attr("fill", alloColors.css.verydarkgrey)
         .call(g => g.select(".domain").remove())
         .call(g => g.append("text")
           .attr("x", marginLeft - 25) // magic number moving legend title left and right
           .attr("y", marginTop + marginBottom) // magic number moving legend title up and down
           .attr("fill", "currentColor")
           .attr("text-anchor", "start")
-          .attr("font-size", 16)
+          .attr("font-size", 14)
           .attr("class", "title")
           .text("Counts per cell"))
           .attr("font-family", "Times, serif")
-          .attr("fill", alloColors.css.darkergrey)
+          .attr("fill", alloColors.css.verydarkgrey)
         .attr("transform", "rotate(-90) translate(-60,5)") // magic number moving ticks and title up and down and left and right
           .selectAll('text')
           .attr("dx", 30) // magic number moving ticks left and right
