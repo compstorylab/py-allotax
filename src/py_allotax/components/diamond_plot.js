@@ -192,22 +192,55 @@ export default function DiamondChart(dat, alpha, divnorm, {
         .attr("stroke-width", 0.25)
         .attr("stroke-opacity", 0.9);
 
-    // Heatmap ----------------------------------
+  // Heatmap ----------------------------------
+    // Out of numerous options, the closest to the matlab version is drawing cell strokes/borders as a separate layer
 
-    const cells = g
-    .selectAll('rect').data(dat).enter()
+  // BASE LAYER: Heatmap cells with fill, NO stroke
+  const cells = g
+    .selectAll('rect.heat')
+    .data(dat)
+    .enter()
     .append('rect')
-    .attr('x', (d) => xy(d.x1))
-    .attr('y', (d) => xy(d.y1))
+    .attr('class', 'heat')
+    .attr('x', d => xy(d.x1))
+    .attr('y', d => xy(d.y1))
     .attr('width', xy.bandwidth())
     .attr('height', xy.bandwidth())
-    .attr('fill', (d) => d.value === 0 ? "none" : color_scale(d.value))
-    // cell borders: current problem is that opacity < 1 is needed for color but
-    // shows stroke overlap. There's no easy way to fix this when using rects.
-    // we could try: create a rect on top of each cell with stroke only, filled only if under-rect has a count>0
-    .attr('stroke', (d) => d.value === 0 ? "none" : alloColors.css.verydarkgrey)
-    .attr('stroke-width', (d) => d.value === 0 ? 0 : 1.18)
-    .attr('stroke-opacity', (d) => d.value === 0 ? 0 : 0.4)
+    .attr('fill', d => d.value === 0 ? "none" : color_scale(d.value))
+
+  // OVERLAY LAYER: Stroke-only rects (placed on top)
+  // this option looks better than default but still have some overlapping color
+  const overlays = g
+    .selectAll('rect.outline')
+    .data(dat)
+    .enter()
+    .append('rect')
+    .attr('class', 'outline')
+    .attr('x', d => xy(d.x1))
+    .attr('y', d => xy(d.y1))
+    .attr('width', xy.bandwidth())
+    .attr('height', xy.bandwidth())
+    .attr('fill', d => d.value > 0 ? 'rgba(255,255,255,0.001)' : 'none')  // optional near-invisible fill
+    .attr('stroke', d => d.value > 0 ? alloColors.css.darkergrey : 'none')
+    .attr('stroke-width', d => d.value > 0 ? 1.18 : 0)
+    .attr('stroke-opacity', d => d.value > 0 ? 0.4 : 0);
+
+  // this option insets them, gets rid of border overlap color issue but creates double borders on bordering cells
+  // const inset = 1; // amount to shrink on each side
+  // const overlays = g
+  //   .selectAll('rect.outline')
+  //   .data(dat)
+  //   .enter()
+  //   .append('rect')
+  //   .attr('class', 'outline')
+  //   .attr('x', d => xy(d.x1) + inset / 2)
+  //   .attr('y', d => xy(d.y1) + inset / 2)
+  //   .attr('width', xy.bandwidth() - inset)
+  //   .attr('height', xy.bandwidth() - inset)
+  //   .attr('fill', d => d.value > 0 ? 'rgba(255,255,255,0.001)' : 'none') // optional near-transparent fill
+  //   .attr('stroke', d => d.value > 0 ? alloColors.css.verydarkgrey : 'none')
+  //   .attr('stroke-width', d => d.value > 0 ? 1.0 : 0) // can lower to match new inset
+  //   .attr('stroke-opacity', d => d.value > 0 ? 0.4 : 0);
 
     g.selectAll('text')
       .data(dat)
