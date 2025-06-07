@@ -78,11 +78,12 @@ to install all python dependencies.
 
 ### Testing
 
-To test the package without building and installing, simply run:
+To test the package without building and installing it, `cd` to py-allotax, install the node modules, then run:
 ```
+pdm add -e . -dG dev
 pdm run pytest
 ```
-This will execute the tests written in the `tests` dir.
+These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
 
 ### Package Build
 Clone this repo and install the requirements:
