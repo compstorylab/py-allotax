@@ -4,6 +4,7 @@ import { alpha_norm_type2, rin } from 'allotaxonometer';
 
 import { alloColors } from '../aesthetics.js';
 
+
 export default function DiamondChart(dat, alpha, divnorm, {
   title,
   maxlog10,
@@ -51,32 +52,43 @@ export default function DiamondChart(dat, alpha, divnorm, {
        .attr('height', DiamondHeight)
        .attr('width', DiamondHeight);
 
-    // AXIS ----------------------------------
+  // AXIS ----------------------------------
 
-    const xAxis = (g, scale) => g
-        .attr("transform", `translate(0, ${innerHeight})`)
-        .call(d3.axisBottom(scale))
-        .call((g) => g.select(".domain").remove()) // remove baseline
-        .selectAll('text')
-          .attr('dy', 5)
-          .attr('dx', 15)
-          .attr('transform', 'scale(-1,1) rotate(45)')
-          .attr('font-size', 12)
-          .attr('font-family', 'Times, serif');
+  const xAxis = (g, scale) => g
+      .attr("transform", `translate(0, ${innerHeight})`)
+      .call(d3.axisBottom(scale)
+        .tickValues(scale.ticks().filter(t => Number.isInteger(Math.log10(t))))
+        .tickFormat(d3.format("~g"))
+        .tickSize(10))  // Longer tick lines (negative = extend up)
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.selectAll(".tick line").attr("stroke-width", 0.5)) // Thinner ticks
+      .selectAll('text')
+        .attr('transform', 'scale(-1,1) rotate(45)')
+        .attr('font-size', 12)
+        .attr('font-family', 'Times, serif')
+        .attr('dx', 11)
+        .attr('dy', 0)
+        // for posterity: after much consternation (thinking the log scaling in pixels was messing up, it turned out to be text alignment)
+        .style("text-anchor", "start"); // right-align text
 
   const yAxis = (g, scale) => g
-        .call(d3.axisLeft(scale))
-        .call((g) => g.select(".domain").remove())
-        .attr("transform", `translate(${innerHeight}, 0) scale(-1, 1)`)
-        .selectAll('text')
-          .attr('dx', 2)
-          .attr('dy', 13)
-          .attr('transform', 'rotate(45)')
-          .attr('font-size', 12)
-          .attr('font-family', 'Times, serif');
+      .call(d3.axisLeft(scale)
+        .tickValues(scale.ticks().filter(t => Number.isInteger(Math.log10(t))))
+        .tickFormat(d3.format("~g"))
+        .tickSize(10))  // Longer tick lines (negative = extend left)
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.selectAll(".tick line").attr("stroke-width", 0.5)) // Thinner ticks
+      .attr("transform", `translate(${innerHeight}, 0) scale(-1, 1)`)
+      .selectAll('text')
+        .attr('dx', 0)
+        .attr('dy', 13)
+        .attr('transform', 'rotate(45)')
+        .attr('font-size', 12)
+        .attr('font-family', 'Times, serif')
+        .style("text-anchor", "end"); // left-align text
 
 
-const xAxisLab = (g, x, text, dy, alpha) => g
+  const xAxisLab = (g, x, text, dy, alpha) => g
       .append("text")
         .attr("x", x)
         .attr("dy", dy)
@@ -109,8 +121,8 @@ const xAxisLab = (g, x, text, dy, alpha) => g
       .call((g) => g.select(".domain").remove())
       .call((g) => g
           .selectAll(".tick line")
-          .attr("stroke", alloColors.css.grey)
-            .style("stroke-dasharray", ("3, 3"))
+          .attr("stroke", alloColors.css.darkergrey)
+            .style("stroke-dasharray", ("1, 3")) // 1 dash unit then 3 gap units
           .attr("y1", -innerHeight+10) // y1 == - ? longer ylines on the top : shorter ylines on the top?
       );
 
@@ -122,8 +134,8 @@ const xAxisLab = (g, x, text, dy, alpha) => g
       .call((g) => g.select(".domain").remove())
       .call((g) => g
           .selectAll(".tick line")
-          .attr("stroke", alloColors.css.grey)
-          .style("stroke-dasharray", ("3, 3"))
+          .attr("stroke", alloColors.css.darkergrey)
+          .style("stroke-dasharray", ("1, 3")) // 1 dash unit then 3 gap units
           .attr("x2", innerHeight) // x2 == - ?  shorter xlines on the right :  longer xlines on the right
       );
 
@@ -157,7 +169,7 @@ const xAxisLab = (g, x, text, dy, alpha) => g
   draw_polygon(g, blue_triangle, alloColors.css.paleblue)
   draw_polygon(g, grey_triangle, alloColors.css.lightgrey)
 
-  
+
   // CONTOUR LINES
 
   const mycontours = get_contours(alpha, maxlog10, divnorm)
@@ -183,17 +195,19 @@ const xAxisLab = (g, x, text, dy, alpha) => g
     // Heatmap ----------------------------------
 
     const cells = g
-        .selectAll('rect').data(dat).enter()
-        .append('rect')
-        .attr('x', (d) => xy(d.x1))
-        .attr('y', (d) => xy(d.y1))
-        .attr('width', xy.bandwidth())
-        .attr('height', xy.bandwidth())
-        .attr('fill', (d) => color_scale(d.value))
-        .attr('fill-opacity', (d) => d.value === 0 ? 0 : color_scale(d.value))
-        .attr('stroke', alloColors.css.verydarkgrey)
-        .attr('stroke-width', (d) => d.value === 0 ? 0 : 0.1)
-        .attr('stroke-opacity', (d) => d.value === 0 ? 0 : 0.9)
+    .selectAll('rect').data(dat).enter()
+    .append('rect')
+    .attr('x', (d) => xy(d.x1))
+    .attr('y', (d) => xy(d.y1))
+    .attr('width', xy.bandwidth())
+    .attr('height', xy.bandwidth())
+    .attr('fill', (d) => d.value === 0 ? "none" : color_scale(d.value))
+    // cell borders: current problem is that opacity < 1 is needed for color but
+    // shows stroke overlap. There's no easy way to fix this when using rects.
+    // we could try: create a rect on top of each cell with stroke only, filled only if under-rect has a count>0
+    .attr('stroke', (d) => d.value === 0 ? "none" : alloColors.css.verydarkgrey)
+    .attr('stroke-width', (d) => d.value === 0 ? 0 : 1.18)
+    .attr('stroke-opacity', (d) => d.value === 0 ? 0 : 0.4)
 
     g.selectAll('text')
       .data(dat)
@@ -209,6 +223,7 @@ const xAxisLab = (g, x, text, dy, alpha) => g
         .attr("font-family", "Times, serif")
         .attr("transform", d => `scale(1,-1) rotate(-90) rotate(-45, ${xy(d.x1)}, ${xy(d.y1)}) translate(${d.which_sys === "right" ? xy(Math.sqrt(d.cos_dist))*1.5 : -xy(Math.sqrt(d.cos_dist))*1.5}, 0)`) // little humph
         .attr("text-anchor", d => d.x1 - d.y1 <= 0 ? "start" : "end");
+
 
     // Draw the middle line
     g.append('line')
