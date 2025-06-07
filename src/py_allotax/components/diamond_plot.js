@@ -65,7 +65,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .selectAll('text')
         .attr('transform', 'scale(-1,1) rotate(45)')
         .attr('font-size', 12)
-        .attr('font-family', 'Times, serif')
+        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
         .attr('dx', 11)
         .attr('dy', 0)
         // for posterity: after much consternation (thinking the log scaling in pixels was messing up, it turned out to be text alignment)
@@ -84,7 +84,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
         .attr('dy', 13)
         .attr('transform', 'rotate(45)')
         .attr('font-size', 12)
-        .attr('font-family', 'Times, serif')
+        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
         .style("text-anchor", "end"); // left-align text
 
 
@@ -149,8 +149,8 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .call(xAxisLab, 40, "← more", 60, 0.8)
       .call(xAxisLab, 40, "frequent", 75, 0.8)
       .call(xGrid, linScale, ncells)
-      .attr("font-family", "Times, serif");
-
+      .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+;
   g.append('g')
       .call(yAxis, logScale)
       .call(yAxisLab, innerHeight/2, "Rank r", 45, .7)
@@ -161,8 +161,8 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .call(yAxisLab, 40, "← less", 60, .7)
       .call(yAxisLab, 40, "frequent", 75, .7)
       .call(yGrid, linScale, ncells)
-      .attr("font-family", "Times, serif");
-
+      .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+;
 
   // BACKGROUND POLYGONS
 
@@ -217,10 +217,12 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .text(d => d.types.split(",")[0])
         .attr("x", (d) => xy(d.x1))
         .attr("y", (d) => Number.isInteger(d.coord_on_diag) ? xy(d.y1) : xy(d.y1)-1) // avoid text occlusion
-        .attr("dy", 20)
-        .attr("fill", alloColors.css.verydarkgrey)
+        .attr("dx", d => d.x1 - d.y1 <= 0 ? 5 : -5)
+        .attr("dy", 5)
+        .attr("fill", alloColors.css.darkergrey)
         .attr("font-size", 12)
-        .attr("font-family", "Times, serif")
+        // trying to account for font names on different systems--these are in order of preference
+        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
         .attr("transform", d => `scale(1,-1) rotate(-90) rotate(-45, ${xy(d.x1)}, ${xy(d.y1)}) translate(${d.which_sys === "right" ? xy(Math.sqrt(d.cos_dist))*1.5 : -xy(Math.sqrt(d.cos_dist))*1.5}, 0)`) // little humph
         .attr("text-anchor", d => d.x1 - d.y1 <= 0 ? "start" : "end");
 

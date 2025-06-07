@@ -67,7 +67,7 @@ export default function myLegend(max_count_log, {
           .attr("font-size", 14)
           .attr("class", "title")
           .text("Counts per cell"))
-          .attr("font-family", "Times, serif")
+          .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
           .attr("fill", alloColors.css.verydarkgrey)
         .attr("transform", "rotate(-90) translate(-60,5)") // magic number moving ticks and title up and down and left and right
           .selectAll('text')
