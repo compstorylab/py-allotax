@@ -28,9 +28,19 @@ import { alloColors } from './aesthetics.js';
   const balance_svg = d3.select("#balance svg");
   const wordshift_svg = d3.select("#wordshift svg");
 
-  // System titles are positioned in the index.html
-  d3.select("#title1").text(title1).style("color", alloColors.css.superdarkgrey);
-  d3.select("#title2").text(title2).style("color", alloColors.css.superdarkgrey);
+  // positioned in the index.html
+  d3.select("#title1")
+    .text(title1)
+    .style("color", alloColors.css.superdarkgrey);
+  d3.select("#title2")
+    .text(title2)
+    .style("color", alloColors.css.superdarkgrey);
+  d3.select("#alpha")
+    .text("α = " + alpha)
+    .style("color", alloColors.css.darkgrey);
+  d3.select("#instrument")
+    .text("Instrument: Rank-Turbulence Divergence")
+    .style("color", alloColors.css.darkgrey);
 
   // Create the allotaxChart instance with the provided data and arguments
   await createAllotaxChart(data1, data2, alpha, title1, title2, { diamond_svg, wordshift_svg, legend_svg, balance_svg });
