@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-import { alloColors } from '../aesthetics.js';
+import { alloColors, alloFonts } from '../aesthetics.js';
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
@@ -91,12 +91,12 @@ export default function BalanceChart(data, {
 
     if (title) bar.append("title")
         .text(title)
-        .attr("font-family", "Times, serif");
+        .attr("font-family", alloFonts);
 
     g.append("g")
         .attr("text-anchor", "end")
         .attr("font-size", 14)
-        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+        .style("font-family", alloFonts)
         .attr("opacity", 0.5)
         .attr("fill", alloColors.css.darkergrey)
       .selectAll("text")
@@ -113,7 +113,7 @@ export default function BalanceChart(data, {
         .call(yAxis)
         .call(g => g.select(".domain").remove())
         .call(g => g.selectAll(".tick text")
-        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+        .style("font-family", alloFonts)
           .attr("font-size", 14)
           .filter(y => YX.get(y))
               .attr("opacity", 0.5)

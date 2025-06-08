@@ -41,3 +41,5 @@ function rgbArrayToCss(rgbArray) {
     css: cssColors     // e.g., colors.css.blue → "rgb(43, 103, 198)"
   };
 
+  // System font stack in order of preference
+  export const alloFonts = `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`;

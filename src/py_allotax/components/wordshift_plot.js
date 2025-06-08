@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { alloColors } from "../aesthetics.js";
+import { alloColors, alloFonts } from "../aesthetics.js";
 
 export default function WordShiftChart(data, {
   x = d => d,
@@ -82,7 +82,7 @@ export default function WordShiftChart(data, {
       .attr("fill", "currentColor")
       .attr("text-anchor", "middle")
       .text(xLabel))
-      .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+      .style("font-family", alloFonts)
       .attr("font-size", 16)
     .attr("fill", alloColors.css.verydarkgrey);
 
@@ -97,7 +97,7 @@ export default function WordShiftChart(data, {
     .attr("width", i => Math.abs(xScale(X[i]) - xScale(0)))
     .attr("height", yScale.bandwidth() * barHeightFactor)
     .attr("y", i => yScale(Y[i]) + (yScale.bandwidth() - yScale.bandwidth() * barHeightFactor) / 2)
-    .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+    .style("font-family", alloFonts)
     .attr("font-size", 14);
 
   if (title) bar.append("title").text(title);
@@ -135,7 +135,7 @@ export default function WordShiftChart(data, {
         // Name text on the normal side
         tickGroup.append("text")
           .text(name_y)
-          .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+          .style("font-family", alloFonts)
           .attr("font-size", 14)
           .attr("fill", alloColors.css.verydarkgrey)
           .attr("dy", "0.32em")
@@ -146,7 +146,7 @@ export default function WordShiftChart(data, {
           // Numbers text on the opposite side
           tickGroup.append("text")
             .text(numbers_y)
-            .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+            .style("font-family", alloFonts)
             .attr("font-size", 14)
             .attr("opacity", 0.5)
             .attr("fill", alloColors.css.darkergrey)
@@ -155,7 +155,7 @@ export default function WordShiftChart(data, {
             .attr("text-anchor", xValue > 0 ? "end" : "start");
         }
       }))
-      .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+      .style("font-family", alloFonts)
       .attr("font-size", 14);
 
 

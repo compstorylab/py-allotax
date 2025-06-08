@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { alloColors } from "../aesthetics.js";
+import { alloColors, alloFonts } from "../aesthetics.js";
 
 export default function myLegend(max_count_log, {
   tickSize = 0,
@@ -67,7 +67,7 @@ export default function myLegend(max_count_log, {
           .attr("font-size", 14)
           .attr("class", "title")
           .text("Counts per cell"))
-          .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+          .style("font-family", alloFonts)
           .attr("fill", alloColors.css.verydarkgrey)
         .attr("transform", "rotate(-90) translate(-60,5)") // magic number moving ticks and title up and down and left and right
           .selectAll('text')

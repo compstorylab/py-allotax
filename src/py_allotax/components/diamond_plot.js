@@ -2,7 +2,7 @@ import * as d3 from "d3";
 
 import { alpha_norm_type2, rin } from 'allotaxonometer';
 
-import { alloColors } from '../aesthetics.js';
+import { alloColors, alloFonts } from '../aesthetics.js';
 
 
 export default function DiamondChart(dat, alpha, divnorm, {
@@ -65,7 +65,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .selectAll('text')
         .attr('transform', 'scale(-1,1) rotate(45)')
         .attr('font-size', 12)
-        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+        .style("font-family", alloFonts)
         .attr('dx', 11)
         .attr('dy', 0)
         // for posterity: after much consternation (thinking the log scaling in pixels was messing up, it turned out to be text alignment)
@@ -84,7 +84,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
         .attr('dy', 13)
         .attr('transform', 'rotate(45)')
         .attr('font-size', 12)
-        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+        .style("font-family", alloFonts)
         .style("text-anchor", "end"); // left-align text
 
 
@@ -149,7 +149,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .call(xAxisLab, 40, "← more", 60, 0.8)
       .call(xAxisLab, 40, "frequent", 75, 0.8)
       .call(xGrid, linScale, ncells)
-      .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+      .style("font-family", alloFonts)
 ;
   g.append('g')
       .call(yAxis, logScale)
@@ -161,7 +161,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .call(yAxisLab, 40, "← less", 60, .7)
       .call(yAxisLab, 40, "frequent", 75, .7)
       .call(yGrid, linScale, ncells)
-      .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+      .style("font-family", alloFonts)
 ;
 
   // BACKGROUND POLYGONS
@@ -254,8 +254,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
         .attr("dy", 5)
         .attr("fill", alloColors.css.darkergrey)
         .attr("font-size", 12)
-        // trying to account for font names on different systems--these are in order of preference
-        .style("font-family", `"EB Garamond", "Garamond", "Century Schoolbook L", "URW Bookman L", "Bookman Old Style", "Times", serif`)
+        .style("font-family", alloFonts)
         .attr("transform", d => `scale(1,-1) rotate(-90) rotate(-45, ${xy(d.x1)}, ${xy(d.y1)}) translate(${d.which_sys === "right" ? xy(Math.sqrt(d.cos_dist))*1.5 : -xy(Math.sqrt(d.cos_dist))*1.5}, 0)`) // little humph
         .attr("text-anchor", d => d.x1 - d.y1 <= 0 ? "start" : "end");
 
