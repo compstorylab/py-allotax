@@ -144,7 +144,7 @@ export default function DiamondChart(dat, alpha, divnorm, {
       .call(xAxisLab, innerHeight/2, "Rank r", 45, 0.8)
       .call(xAxisLab, innerHeight/2, "for", 63, 0.8)
       .call(xAxisLab, innerHeight/2, title[1], 80, 0.8)
-      .call(xAxisLab, innerHeight-40, "more →", 60, 0.8)
+      .call(xAxisLab, innerHeight-40, "less →", 60, 0.8)
       .call(xAxisLab, innerHeight-40, "frequent", 75, 0.8)
       .call(xAxisLab, 40, "← more", 60, 0.8)
       .call(xAxisLab, 40, "frequent", 75, 0.8)
