@@ -85,6 +85,14 @@ pdm run pytest
 ```
 These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
 
+### Benchmarking
+
+To benchmark the package:
+```
+pdm run benchmark
+```
+These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
+
 ### Package Build
 Clone this repo and install the requirements:
 

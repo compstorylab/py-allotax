@@ -18,7 +18,16 @@ build-backend = "pdm.backend"
 [tool.pdm]
 distribution = true
 
+# Benchmark-specific settings
+[tool.pytest-benchmark]
+
+[tool.pdm.scripts]
+benchmark = "pytest tests/test_benchmark.py --benchmark-only --benchmark-verbose"
+benchmark-save = {shell = "pdm run benchmark && python scripts/save_benchmark_summary.py"}
+benchmark-history = "python scripts/save_benchmark_summary.py history"
+
 [dependency-groups]
 dev = [
     "pytest>=8.3.4",
+    "pytest-benchmark[histogram]>=5.1.0",
 ]
