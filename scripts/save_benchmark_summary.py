@@ -30,7 +30,7 @@ def get_git_info():
 
 def get_file_info(filepath):
     """Get file size and record count"""
-    if not filepath or not os.path.exists(filepath):
+    if not os.path.exists(filepath):
         return {"size_kb": 0, "records": 0}
     
     size_bytes = os.path.getsize(filepath)
@@ -50,6 +50,25 @@ def get_file_info(filepath):
         records = 0
     
     return {"size_kb": size_kb, "records": records}
+
+def extract_file_paths(test_name):
+    """Extract file paths from test name"""
+    file_mapping = {
+        "Large files (1968+2018)": {
+            "file1": "example_data/boys_1968.json",
+            "file2": "example_data/boys_2018.json"
+        },
+        "Small vs Large (1895+2018)": {
+            "file1": "example_data/boys_1895.json",
+            "file2": "example_data/boys_2018.json"
+        },
+        "Small vs Medium (1895+1968)": {
+            "file1": "example_data/boys_1895.json",
+            "file2": "example_data/boys_1968.json"
+        }
+    }
+    
+    return file_mapping.get(test_name, {"file1": "", "file2": ""})
 
 def save_simple_summary():
     """Save a simple benchmark summary with file size info"""
@@ -79,37 +98,35 @@ def save_simple_summary():
     for bench in data.get("benchmarks", []):
         name = bench["name"]
         stats = bench["stats"]
-        extra_info = bench.get("extra_info", {})
         
-        # Get file paths from extra_info (much cleaner!)
-        file1_path = extra_info.get("file1_path", "")
-        file2_path = extra_info.get("file2_path", "")
-        test_desc = extra_info.get("test_description", name)
-        
-        # Get human-readable name from the benchmark name (pytest id)
-        # This extracts the friendly name from pytest parametrize ids
-        if "[" in name and "]" in name:
-            friendly_name = name.split("[")[1].split("]")[0]
+        # Extract description
+        if "Large files" in name:
+            desc = "Large files (1968+2018)"
+        elif "Small vs Large" in name:
+            desc = "Small vs Large (1895+2018)"  
+        elif "Small vs Medium" in name:
+            desc = "Small vs Medium (1895+1968)"
         else:
-            friendly_name = test_desc
+            desc = name
         
-        # Get file info
-        file1_info = get_file_info(file1_path)
-        file2_info = get_file_info(file2_path)
+        # Get file paths and sizes
+        file_paths = extract_file_paths(desc)
+        file1_info = get_file_info(file_paths["file1"])
+        file2_info = get_file_info(file_paths["file2"])
         
         summary["results"].append({
-            "test": friendly_name,
+            "test": desc,
             "mean_time": round(stats["mean"], 3),
             "min_time": round(stats["min"], 3),
             "rounds": stats.get("rounds", 1),
             "files": {
                 "file1": {
-                    "path": file1_path,
+                    "path": file_paths["file1"],
                     "size_kb": file1_info["size_kb"],
                     "records": file1_info["records"]
                 },
                 "file2": {
-                    "path": file2_path,
+                    "path": file_paths["file2"], 
                     "size_kb": file2_info["size_kb"],
                     "records": file2_info["records"]
                 },
