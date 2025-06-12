@@ -8,6 +8,7 @@ python3 generate_svg.py convert/boys_2022.json convert/boys_2023.json output_cha
 """
 
 import argparse
+import os
 import json
 import subprocess
 import tempfile
@@ -25,20 +26,7 @@ def generate_svg(
     title2: str,
     desired_format: str = "pdf",
 ) -> None:
-    """Generate static allotaxonometer plot using d3.js.
-    Args:
-        json_file_1: Path to the first json data file.
-        json_file_1: Path to the second json data file.
-        output_file: Path to save the output pdf file.
-        alpha: Alpha value for allotaxChart.
-        title1: Title for System 1.
-        title2: Title for System 2.
-        desired_format (optional): Desired output format (default: pdf). Provide
-        "html" to exit once html file is saved.
-    Notes:
-        See utils.py for helpers to convert .csv or .js to .json.
-    """
-    # Verify the input data and read in .json data files as text
+    """Generate static allotaxonometer plot using Svelte SSR + Puppeteer."""
     verify_input_data(json_file_1, json_file_2)
     with open(json_file_1, "r") as file:
         data1_json = json.loads(file.read())
@@ -46,39 +34,37 @@ def generate_svg(
         data2_json = json.loads(file.read())
 
     # Write the json data to a temporary file
-    temp_file_path = tempfile.mktemp(suffix=".js")
+    temp_file_path = tempfile.mktemp(suffix=".mjs")
     with open(temp_file_path, "w") as file:
         file.write(f"const data1 = {json.dumps(data1_json)};\n")
         file.write(f"const data2 = {json.dumps(data2_json)};\n")
         file.write(f"const alpha = {alpha};\n")
         file.write(f"const title1 = \"{title1}\";\n")
         file.write(f"const title2 = \"{title2}\";\n")
-        file.write("module.exports = { data1, data2, alpha, title1, title2 };")
+        file.write("export { data1, data2, alpha, title1, title2 };")
 
-    # Command to run the JavaScript file using Node.js
     js_file_path = resources.files('py_allotax').joinpath('generate_svg_minimum.js')
-    index_file_path = resources.files("py_allotax").joinpath("index.html")
-    command = ["node", str(js_file_path), temp_file_path, str(index_file_path)]
+    
+    # Convert to absolute paths
+    abs_temp_file_path = os.path.abspath(temp_file_path)
+    abs_output_file = os.path.abspath(output_file)
+    
+    # Add format argument to command
+    command = ["node", str(js_file_path), abs_temp_file_path, abs_output_file, desired_format]
 
     # Run the JS file and capture the output
-    result = subprocess.run(command, capture_output=True, text=True)
+    result = subprocess.run(command, capture_output=True, text=True, cwd=os.path.dirname(js_file_path))
 
     # Check if the command was successful
     if result.returncode == 0:
-        # strip .pdf from output_file name
-        file_name = output_file.rsplit(".", 1)[0]
-        # Save the HTML output to a file
-        with open(f"{file_name}.html", "w") as file:
-            file.write(result.stdout)
-        if desired_format == "html":  # quit if html is desired
-            print(f"HTML saved to {file_name}.html")
-            return
-        print(f"HTML saved to {output_file}")
-        # Convert the HTML to PDF
-        convert_html_to_pdf("pyhtml2pdf", f"{file_name}.html", output_file)
+        if desired_format == "pdf":
+            print(f"PDF saved to {output_file}")
+        else:
+            print(f"HTML saved to {output_file}")
     else:
+        print(f"STDOUT: {result.stdout}")
+        print(f"STDERR: {result.stderr}")
         raise Exception(f"Error in Graph Generation: {result.stderr}")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
