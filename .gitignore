@@ -11,3 +11,4 @@ tests/test.html
 tests/test.pdf
 test_large_files.html
 .benchmarks/
+src/py_allotax/test.*

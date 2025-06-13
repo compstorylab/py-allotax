@@ -81,6 +81,9 @@ function renderDashboard(props) {
     
     console.log('Generating HTML...');
     
+    const pdfWidth = 4200;  // A3 landscape width in pixels
+    const pdfHeight = 2970; // A3 landscape height in pixels
+
     // Generate HTML
     const html = renderDashboard({
       dat,
@@ -91,10 +94,10 @@ function renderDashboard(props) {
       title: [title1, title2],
       maxlog10,
       max_count_log,
-      height: 815,
-      width: 1200,
-      DiamondHeight: 600,
-      DiamondWidth: 600,
+      width: pdfWidth,
+      height: pdfHeight,
+      DashboardWidth: pdfWidth,
+      DashboardHeight: pdfHeight,
       marginInner: 160,
       marginDiamond: 40,
       xDomain: [-max_shift * 1.5, max_shift * 1.5],
@@ -134,12 +137,10 @@ function renderDashboard(props) {
         printBackground: true,
         preferCSSPageSize: false,
         margin: {
-          top: '10mm',
-          right: '10mm',
-          bottom: '10mm',
-          left: '10mm'
+          top: '15mm',
+          left: '35mm'
         },
-        scale: 0.8
+        scale: 1.0
       });
       
       await browser.close();
