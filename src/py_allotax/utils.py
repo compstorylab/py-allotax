@@ -9,35 +9,6 @@ import json
 import os
 
 import pandas as pd
-from pyhtml2pdf import converter
-
-
-def convert_html_to_pdf(tool: str, html_file_path: str, output_file_path: str) -> None:
-    """Convert HTML to PDF using the specified tool.
-
-    Note: the match-case structure sets up tool extensibility.
-    """
-    path = os.path.abspath(html_file_path)
-    match tool:
-        case "pyhtml2pdf":
-            converter.convert(
-                f"file:///{path}",
-                output_file_path,
-                print_options={
-                    "landscape": True,
-                    "scale": 0.8,
-                    "marginLeft": 0,
-                    "pageRanges": "1",
-                },
-            )
-            print("PDF conversion complete using pyhtml2pdf.")
-        # case: implement other method for HTML conversion
-        case _:
-            print("Invalid tool selected.")
-
-
-### Helper functions to convert data files among 3 formats: csv, json, js
-
 
 def strip_export_statement(js_content):
     """Strip the 'export const data =' part from the JS content."""

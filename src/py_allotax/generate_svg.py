@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 from importlib import resources
 
-from py_allotax.utils import convert_html_to_pdf, verify_input_data
+from py_allotax.utils import verify_input_data
 
 
 def generate_svg(

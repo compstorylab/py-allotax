@@ -19,6 +19,11 @@ build-backend = "pdm.backend"
 distribution = true
 
 # Benchmark-specific settings
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "-e file:///${PROJECT_ROOT}/src/py_allotax",
+]
 [tool.pytest-benchmark]
 
 [tool.pdm.scripts]

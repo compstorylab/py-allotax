@@ -95,7 +95,7 @@ def save_simple_summary():
         "results": []
     }
     
-    for bench in data.get("benchmarks", []):
+    for bench in data.get("results", []):
         name = bench["name"]
         stats = bench["stats"]
         
