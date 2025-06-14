@@ -38,10 +38,11 @@ function renderDashboard(props) {
     // Parse command line arguments
     const tempFilePath = process.argv[2];
     const outputPath = process.argv[3];
-    const desiredFormat = process.argv[4] || 'pdf'; // pdf or html
+    const outputMode = process.argv[4] || 'pdf'; // pdf, html, rtd-json, rtd-csv, rtd-console
     
     if (!tempFilePath || !outputPath) {
-      console.error('Usage: node generate_svg_minimum.js <temp_file> <output_file> [format]');
+      console.error('Usage: node generate_output.js <temp_file> <output_file> [mode]');
+      console.error('Modes: pdf, html, rtd-json, rtd-csv, rtd-console');
       process.exit(1);
     }
     
@@ -58,12 +59,61 @@ function renderDashboard(props) {
     
     console.log('Processing data...');
     
-    // Process data with new API
+    // Process data with API
     const me = combElems(data1, data2);
     const rtd = rank_turbulence_divergence(me, alpha);
+    
+    // Handle RTD-only outputs
+    if (outputMode.startsWith('rtd-')) {
+      console.log('RTD calculation complete');
+      
+      const format = outputMode.split('-')[1];
+      
+      switch (format) {
+        case 'json':
+          const jsonOutput = {
+            metadata: {
+              title1,
+              title2,
+              alpha,
+              timestamp: new Date().toISOString()
+            },
+            rtd: rtd
+          };
+          fs.writeFileSync(outputPath, JSON.stringify(jsonOutput, null, 2));
+          console.log(`RTD data saved as JSON to: ${outputPath}`);
+          break;
+          
+        case 'csv':
+          let csvContent = 'metric,value\n';
+          if (typeof rtd === 'object') {
+            for (const [key, value] of Object.entries(rtd)) {
+              if (Array.isArray(value)) {
+                value.forEach((item, index) => {
+                  csvContent += `${key}_${index},${item}\n`;
+                });
+              } else {
+                csvContent += `${key},${value}\n`;
+              }
+            }
+          }
+          fs.writeFileSync(outputPath, csvContent);
+          console.log(`RTD data saved as CSV to: ${outputPath}`);
+          break;
+          
+        case 'console':
+          console.log('RTD Data:');
+          console.log(JSON.stringify(rtd, null, 2));
+          fs.writeFileSync(outputPath, JSON.stringify(rtd, null, 2));
+          console.log(`RTD data also saved to: ${outputPath}`);
+          break;
+      }
+      
+      return rtd;
+    }
+    
+    // Continue with full processing for HTML/PDF outputs
     const dat = diamond_count(me, rtd);
-
-    // Extract processed data
     const diamond_dat = dat.counts;
     
     // Calculate derived values
@@ -107,13 +157,20 @@ function renderDashboard(props) {
       showLegend: true
     });
     
-    // Always save HTML file (for testing)
-    const htmlPath = outputPath.replace('.pdf', '.html');
-    fs.writeFileSync(htmlPath, html);
-    console.log(`HTML saved to ${htmlPath}`);
+    // Handle HTML output
+    if (outputMode === 'html') {
+      fs.writeFileSync(outputPath, html);
+      console.log(`HTML saved to ${outputPath}`);
+      return { html, rtd };
+    }
     
-    // Only generate PDF if format is 'pdf'
-    if (desiredFormat === 'pdf') {
+    // Handle PDF output (default)
+    if (outputMode === 'pdf') {
+      // Always save HTML file (for testing)
+      const htmlPath = outputPath.replace('.pdf', '.html');
+      fs.writeFileSync(htmlPath, html);
+      console.log(`HTML saved to ${htmlPath}`);
+      
       console.log('Launching browser...');
       
       const browser = await puppeteer.launch({
@@ -145,10 +202,12 @@ function renderDashboard(props) {
       
       await browser.close();
       console.log(`PDF successfully generated: ${outputPath}`);
+      
+      return { pdf: outputPath, html: htmlPath, rtd };
     }
     
   } catch (error) {
-    console.error('Error generating files:', error.message);
+    console.error('Error generating output:', error.message);
     console.error('Stack:', error.stack);
     process.exit(1);
   }

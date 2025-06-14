@@ -5,10 +5,54 @@ Note:
 with columns of these names and ordering: ['types', 'counts', 'total_unique', 'probs']
 """
 
+from typing import Dict, Any
 import json
 import os
 
 import pandas as pd
+
+import subprocess
+import tempfile
+from importlib import resources
+
+def get_rtd(json_file_1: str, json_file_2: str, alpha: str):
+    """Just get the damn RTD data. No BS."""
+    
+    # Load the data
+    with open(json_file_1) as f:
+        data1 = json.load(f)
+    with open(json_file_2) as f:
+        data2 = json.load(f)
+    
+    # Make temp files
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.mjs', delete=False) as input_file, \
+         tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as output_file:
+        
+        # Write input
+        input_file.write(f"""
+const data1 = {json.dumps(data1)};
+const data2 = {json.dumps(data2)};
+const alpha = {alpha};
+const title1 = "";
+const title2 = "";
+export {{ data1, data2, alpha, title1, title2 }};
+""")
+        input_file.flush()
+        
+        # Run JS
+        js_file = resources.files('py_allotax').joinpath('generate_svg_minimum.js')
+        subprocess.run([
+            "node", str(js_file), 
+            input_file.name, 
+            output_file.name, 
+            "rtd-json"
+        ], check=True)
+        
+        # Get result
+        with open(output_file.name) as f:
+            result = json.load(f)
+        
+        return result['rtd']
 
 def strip_export_statement(js_content):
     """Strip the 'export const data =' part from the JS content."""
