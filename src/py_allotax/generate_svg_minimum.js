@@ -38,11 +38,11 @@ function renderDashboard(props) {
     // Parse command line arguments
     const tempFilePath = process.argv[2];
     const outputPath = process.argv[3];
-    const outputMode = process.argv[4] || 'pdf'; // pdf, html, rtd-json, rtd-csv, rtd-console
+    const desiredFormat = process.argv[4] || 'pdf';
+    const topN = process.argv[5] ? parseInt(process.argv[5]) : 30;
     
     if (!tempFilePath || !outputPath) {
-      console.error('Usage: node generate_output.js <temp_file> <output_file> [mode]');
-      console.error('Modes: pdf, html, rtd-json, rtd-csv, rtd-console');
+      console.error('Usage: node generate_svg_minimum.js <temp_file> <output_file> [format] [top_n]');
       process.exit(1);
     }
     
@@ -59,60 +59,37 @@ function renderDashboard(props) {
     
     console.log('Processing data...');
     
-    // Process data with API
+    // Process data with new API
     const me = combElems(data1, data2);
     const rtd = rank_turbulence_divergence(me, alpha);
     
-    // Handle RTD-only outputs
-    if (outputMode.startsWith('rtd-')) {
-      console.log('RTD calculation complete');
+    // If RTD mode, return RTD + clean word data and exit early
+    if (desiredFormat === 'rtd-json') {
+      const dat = diamond_count(me, rtd);
+      const allBarData = wordShift_dat(me, dat);
+      const rawBarData = topN > 0 ? allBarData.slice(0, topN) : allBarData;
       
-      const format = outputMode.split('-')[1];
+      // Clean up the barData format
+      const cleanBarData = rawBarData.map((item, i) => ({
+        type: me[0]['types'][i],
+        rank1: me[0]['ranks'][i],
+        rank2: me[1]['ranks'][i], 
+        rank_diff: item.rank_diff,
+        metric: item.metric
+      }));
       
-      switch (format) {
-        case 'json':
-          const jsonOutput = {
-            metadata: {
-              title1,
-              title2,
-              alpha,
-              timestamp: new Date().toISOString()
-            },
-            rtd: rtd
-          };
-          fs.writeFileSync(outputPath, JSON.stringify(jsonOutput, null, 2));
-          console.log(`RTD data saved as JSON to: ${outputPath}`);
-          break;
-          
-        case 'csv':
-          let csvContent = 'metric,value\n';
-          if (typeof rtd === 'object') {
-            for (const [key, value] of Object.entries(rtd)) {
-              if (Array.isArray(value)) {
-                value.forEach((item, index) => {
-                  csvContent += `${key}_${index},${item}\n`;
-                });
-              } else {
-                csvContent += `${key},${value}\n`;
-              }
-            }
-          }
-          fs.writeFileSync(outputPath, csvContent);
-          console.log(`RTD data saved as CSV to: ${outputPath}`);
-          break;
-          
-        case 'console':
-          console.log('RTD Data:');
-          console.log(JSON.stringify(rtd, null, 2));
-          fs.writeFileSync(outputPath, JSON.stringify(rtd, null, 2));
-          console.log(`RTD data also saved to: ${outputPath}`);
-          break;
-      }
+      const output = {
+        rtd: rtd,
+        barData: cleanBarData,
+        total_words: allBarData.length
+      };
       
-      return rtd;
+      fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
+      console.log(`RTD + barData (${cleanBarData.length}/${allBarData.length} words) saved to ${outputPath}`);
+      return;
     }
     
-    // Continue with full processing for HTML/PDF outputs
+    // Continue with full processing for HTML/PDF
     const dat = diamond_count(me, rtd);
     const diamond_dat = dat.counts;
     
@@ -131,8 +108,8 @@ function renderDashboard(props) {
     
     console.log('Generating HTML...');
     
-    const pdfWidth = 4200;  // A3 landscape width in pixels
-    const pdfHeight = 2970; // A3 landscape height in pixels
+    const pdfWidth = 4200;
+    const pdfHeight = 2970;
 
     // Generate HTML
     const html = renderDashboard({
@@ -157,16 +134,12 @@ function renderDashboard(props) {
       showLegend: true
     });
     
-    // Handle HTML output
-    if (outputMode === 'html') {
+    // Handle HTML/PDF output
+    if (desiredFormat === 'html') {
       fs.writeFileSync(outputPath, html);
       console.log(`HTML saved to ${outputPath}`);
-      return { html, rtd };
-    }
-    
-    // Handle PDF output (default)
-    if (outputMode === 'pdf') {
-      // Always save HTML file (for testing)
+    } else {
+      // PDF (default)
       const htmlPath = outputPath.replace('.pdf', '.html');
       fs.writeFileSync(htmlPath, html);
       console.log(`HTML saved to ${htmlPath}`);
@@ -202,12 +175,10 @@ function renderDashboard(props) {
       
       await browser.close();
       console.log(`PDF successfully generated: ${outputPath}`);
-      
-      return { pdf: outputPath, html: htmlPath, rtd };
     }
     
   } catch (error) {
-    console.error('Error generating output:', error.message);
+    console.error('Error generating files:', error.message);
     console.error('Stack:', error.stack);
     process.exit(1);
   }

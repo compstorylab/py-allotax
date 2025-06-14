@@ -5,30 +5,31 @@ Note:
 with columns of these names and ordering: ['types', 'counts', 'total_unique', 'probs']
 """
 
-from typing import Dict, Any
-import json
 import os
-
-import pandas as pd
-
+import json
 import subprocess
 import tempfile
+import pandas as pd
 from importlib import resources
 
-def get_rtd(json_file_1: str, json_file_2: str, alpha: str):
-    """Just get the damn RTD data. No BS."""
+def get_rtd(json_file_1: str, json_file_2: str, alpha: str, top_n: int = 30):
+    """Get RTD + words driving divergence as DataFrame.
     
-    # Load the data
+    Args:
+        top_n: Number of top words to return. Use 0 or -1 for all words.
+    """
+    
+    # Load data
     with open(json_file_1) as f:
         data1 = json.load(f)
     with open(json_file_2) as f:
         data2 = json.load(f)
     
-    # Make temp files
+    # Create temp files
     with tempfile.NamedTemporaryFile(mode='w', suffix='.mjs', delete=False) as input_file, \
          tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as output_file:
         
-        # Write input
+        # Write JS input file
         input_file.write(f"""
 const data1 = {json.dumps(data1)};
 const data2 = {json.dumps(data2)};
@@ -39,21 +40,28 @@ export {{ data1, data2, alpha, title1, title2 }};
 """)
         input_file.flush()
         
-        # Run JS
+        # Run JS script
         js_file = resources.files('py_allotax').joinpath('generate_svg_minimum.js')
         subprocess.run([
             "node", str(js_file), 
             input_file.name, 
             output_file.name, 
-            "rtd-json"
+            "rtd-json",
+            str(top_n if top_n > 0 else 0)  # Pass top_n to JS
         ], check=True)
         
-        # Get result
+        # Read result
         with open(output_file.name) as f:
             result = json.load(f)
         
-        return result['rtd']
-
+        # Convert to DataFrame
+        words_df = pd.DataFrame(result['barData'])
+        
+        return {
+            'rtd': result['rtd'],
+            'words_df': words_df,
+            'total_words': result.get('total_words', len(words_df))
+        }
 def strip_export_statement(js_content):
     """Strip the 'export const data =' part from the JS content."""
     return js_content.replace("export const data =", "").strip()
