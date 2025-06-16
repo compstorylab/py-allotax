@@ -64,7 +64,8 @@ If running the example, you can check your result against the [example output](e
 
 To get help, you can run `?py_allotax.generate_svg.generate_svg` in a notebook cell to see argument descriptions.
 
-*Note*: Your own data must be in the `.json` format (see json examples in `example_data/`). If you have a `.csv` file, you can convert it to `.json` using `utils.convert_csv_data` (see `examples.ipynb`).
+> [!WARNING]
+> Your own data must be in the `.json` format (see json examples in `example_data/`). If you have a `.csv` file, you can convert it to `.json` using `utils.convert_csv_data` (see `examples.ipynb`).
 
 
 ## Developer Notes
