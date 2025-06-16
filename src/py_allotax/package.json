@@ -1,9 +1,7 @@
 {
   "type": "module",
   "dependencies": {
-    "@ungap/structured-clone": "^1.2.0",
-    "allotaxonometer-ui": "^0.1.6",
-    "canvas": "^2.11.2",
+    "allotaxonometer-ui": "^0.1.8",
     "d3": "^7.9.0",
     "ds": "^2.0.2",
     "jsdom": "^25.0.1",
