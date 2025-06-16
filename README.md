@@ -173,7 +173,7 @@ Users accessing these tools is our primary goal, so feel free to contact us by s
 
 ## Resources
 
-- [Allotaxonometer main package](https://github.com/jstonge/allotaxonometer)
+- [Allotaxonometer-ui main package](https://github.com/Vermont-Complex-Systems/allotaxonometer-ui)
 - [Allotaxonometer web app](https://allotax.vercel.app/)
 - The work and paper leading to these tools is [here](https://doi.org/10.1140/epjds/s13688-023-00400-x).
 - See the [allo diagram]() to understand the full tool ecosystem around the allotaxonometer (download and load in draw.io)
