@@ -1,11 +1,11 @@
 [project]
 name = "py-allotax"
-version = "1.0.2"
+version = "1.0.3"
 description = "Python implementation of allotaxonometer to produce static graphs."
 authors = [
     {name = "Computational StoryLab", email = "jonathanstonge7@gmail.com"},
 ]
-dependencies = ["pandas>=2.2.1", "pyhtml2pdf>=0.0.7", "selenium==4.25.0"]
+dependencies = ["pandas>=2.2.1"]
 requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
@@ -18,7 +18,17 @@ build-backend = "pdm.backend"
 [tool.pdm]
 distribution = true
 
+# Benchmark-specific settings
+[tool.pytest-benchmark]
+
+[tool.pdm.scripts]
+test = "pytest -m 'not benchmark'"
+benchmark = "pytest tests/test_benchmark.py --benchmark-only --benchmark-verbose --benchmark-json=.benchmarks/latest.json"
+benchmark-save = {shell = "pdm run benchmark && python scripts/save_benchmark_summary.py"}
+benchmark-history = "python scripts/save_benchmark_summary.py history"
+
 [dependency-groups]
 dev = [
     "pytest>=8.3.4",
+    "pytest-benchmark[histogram]>=5.1.0",
 ]

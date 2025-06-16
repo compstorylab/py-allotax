@@ -35,14 +35,16 @@ Table of contents:
     ```bash
     nvm install --lts
     ```
-1. Install Chrome or Chromium because one package depends on having Chrome (brower) or Chromium (browser driver). **If you have Chrome installed, skip this step**.
-
 1. Activate your desired python environment.
 
 1. Install package:
     ```bash
     pip3 install py-allotax
     ```
+
+
+> [!NOTE]
+> We use `puppeteer.js` under the hood, which is going to download compatible Chrome during installation.
 
 ## Usage instructions
 
@@ -62,7 +64,8 @@ If running the example, you can check your result against the [example output](e
 
 To get help, you can run `?py_allotax.generate_svg.generate_svg` in a notebook cell to see argument descriptions.
 
-*Note*: Your own data must be in the `.json` format (see json examples in `example_data/`). If you have a `.csv` file, you can convert it to `.json` using `utils.convert_csv_data` (see `examples.ipynb`).
+> [!WARNING]
+> Your own data must be in the `.json` format (see json examples in `example_data/`). If you have a `.csv` file, you can convert it to `.json` using `utils.convert_csv_data` (see `examples.ipynb`).
 
 
 ## Developer Notes
@@ -78,11 +81,20 @@ to install all python dependencies.
 
 ### Testing
 
-To test the package without building and installing, simply run:
+To test the package without building and installing it, `cd` to py-allotax, install the node modules, then run:
 ```
-pdm run pytest
+pdm add -e . -dG dev
+pdm run test # benchmarks excluded 
 ```
-This will execute the tests written in the `tests` dir.
+These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
+
+### Benchmarking
+
+To benchmark the package:
+```
+pdm run benchmark
+```
+These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
 
 ### Package Build
 Clone this repo and install the requirements:
@@ -96,6 +108,9 @@ cd py-allotax &&
 You should see a `.whl` file in the newly created `dist` directory.
 
 ## Frequent questions or issues
+
+How much data can I run in this tool?
+- The py-allotax supports approximately 2 GB of data. We recommend checking the size of your data file.
 
 Will any data format work?
 - There are specific column/variable names, and the data must be in `.json` format. The column names and formats vary across a few of the allotaxonometer tools, so there is a data format conversion function in `utils.py` to go from `.csv` to `.json`. See `examples.ipynb` for how to convert your data from `.csv` to `.json`.
