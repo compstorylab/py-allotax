@@ -167,8 +167,8 @@ function renderDashboard(props) {
         printBackground: true,
         preferCSSPageSize: false,
         margin: {
-          top: '15mm',
-          left: '35mm'
+          top: '40mm',
+          left: '40mm'
         },
         scale: 1.0
       });
