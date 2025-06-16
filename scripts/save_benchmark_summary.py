@@ -77,15 +77,26 @@ def save_simple_summary():
         print("No .benchmarks directory found. Run benchmarks first.")
         return
     
-    results_files = list(benchmarks_dir.rglob("*.json"))
-    if not results_files:
-        print("No benchmark results found.")
+    # Look for the latest.json file created by --benchmark-json
+    latest_file = benchmarks_dir / "latest.json"
+    
+    if not latest_file.exists():
+        print(f"No benchmark results found at {latest_file}")
+        print("Make sure your benchmark command uses --benchmark-json=.benchmarks/latest.json")
         return
     
-    latest_file = max(results_files, key=os.path.getmtime)
+    print(f"Processing benchmark file: {latest_file.name}")
     
     with open(latest_file, 'r') as f:
         data = json.load(f)
+    
+    # Handle pytest-benchmark output format: {"benchmarks": [...], "machine_info": {...}}
+    if not isinstance(data, dict) or "benchmarks" not in data:
+        print(f"ERROR: Expected pytest-benchmark format with 'benchmarks' key")
+        print(f"Got: {type(data)}, keys: {list(data.keys()) if isinstance(data, dict) else 'not a dict'}")
+        return
+        
+    pytest_benchmarks = data["benchmarks"]
     
     # Create summary with version and file info
     summary = {
@@ -95,11 +106,12 @@ def save_simple_summary():
         "results": []
     }
     
-    for bench in data.get("results", []):
+    for bench in pytest_benchmarks:
+        # Extract test name from pytest-benchmark format
         name = bench["name"]
         stats = bench["stats"]
         
-        # Extract description
+        # Extract description from test name
         if "Large files" in name:
             desc = "Large files (1968+2018)"
         elif "Small vs Large" in name:

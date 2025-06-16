@@ -23,7 +23,7 @@ distribution = true
 
 [tool.pdm.scripts]
 test = "pytest -m 'not benchmark'"
-benchmark = "pytest tests/test_benchmark.py --benchmark-only --benchmark-verbose"
+benchmark = "pytest tests/test_benchmark.py --benchmark-only --benchmark-verbose --benchmark-json=.benchmarks/latest.json"
 benchmark-save = {shell = "pdm run benchmark && python scripts/save_benchmark_summary.py"}
 benchmark-history = "python scripts/save_benchmark_summary.py history"
 
