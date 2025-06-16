@@ -43,8 +43,8 @@ Table of contents:
     ```
 
 
-> [!NOTE]
-> We use `puppeteer.js` under the hood, which is going to download compatible Chrome during installation.
+> Note:
+> We use `puppeteer.js` under the hood, which is going to download a compatible Chrome during installation.
 
 ## Usage instructions
 
@@ -84,7 +84,7 @@ to install all python dependencies.
 To test the package without building and installing it, `cd` to py-allotax, install the node modules, then run:
 ```
 pdm add -e . -dG dev
-pdm run test # benchmarks excluded 
+pdm run test # benchmarks excluded
 ```
 These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
 
@@ -147,13 +147,6 @@ Terminal says there is no `nvm` after installing it.
 
 Terminal says there is no `node` even after I have already run `py-allotax` methods.
 - This seems to happen when switching environments or changing branches. You can simply re-run the installs. You should already have `nvm` and be able to start from there.
-
-I am receiving this error: `AttributeError: 'ChromiumRemoteConnection' object has no attribute '_url’`.
-- One of secondary dependencies is `selenium`, and it seems to break if the version is higher than 4.25.0. Run `pip3 install selenium==4.25.0`.
-
-I am receiving an `npm` error regarding `canvas`, `pixman`, or other packages I do not recognize.
-- You may need `canvas` and its dependencies. Please follow [this guide](https://www.npmjs.com/package/canvas#compiling) to installing it based on your OS.
-
 
 <br>
 <br>
