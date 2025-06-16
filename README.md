@@ -8,7 +8,7 @@
   <i>Allotax icon created by Julia W. Zimmerman</i>
 </p>
 
-The `py-allotax` implements a python interface to the `allotaxonometer` library. This tool provides a way for users to input data and arguments and receive back a saved plot! The tool is designed to be used in a command line or in a python notebook in a few lines of code (see usage instructions at the bottom).
+The `py-allotax` implements a python interface to the `allotaxonometer-ui` library. This tool provides a way for users to input data and arguments and receive back a saved plot! The tool is designed to be used in a command line or in a python notebook in a few lines of code (see usage instructions at the bottom).
 
 
 <div style="clear: both;"></div>
