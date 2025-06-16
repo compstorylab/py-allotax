@@ -35,14 +35,16 @@ Table of contents:
     ```bash
     nvm install --lts
     ```
-1. Install Chrome or Chromium because one package depends on having Chrome (brower) or Chromium (browser driver). **If you have Chrome installed, skip this step**.
-
 1. Activate your desired python environment.
 
 1. Install package:
     ```bash
     pip3 install py-allotax
     ```
+
+
+> [!NOTE]
+> We use `puppeteer.js` under the hood, which is going to download compatible Chrome during installation.
 
 ## Usage instructions
 
@@ -81,7 +83,7 @@ to install all python dependencies.
 To test the package without building and installing it, `cd` to py-allotax, install the node modules, then run:
 ```
 pdm add -e . -dG dev
-pdm run pytest
+pdm run test # benchmarks excluded 
 ```
 These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
 

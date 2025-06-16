@@ -6,6 +6,7 @@ import json
 
 class TestGenerateSVGBenchmark:
     
+    @pytest.mark.benchmark
     @pytest.mark.parametrize("file1,file2,description", [
         ("example_data/boys_1968.json", "example_data/boys_2018.json", "Large_files_1968_2018"),
         ("example_data/boys_1895.json", "example_data/boys_2018.json", "Small_vs_Large_1895_2018"),

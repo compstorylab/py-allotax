@@ -19,14 +19,10 @@ build-backend = "pdm.backend"
 distribution = true
 
 # Benchmark-specific settings
-
-[tool.pdm.dev-dependencies]
-dev = [
-    "-e file:///${PROJECT_ROOT}/src/py_allotax",
-]
 [tool.pytest-benchmark]
 
 [tool.pdm.scripts]
+test = "pytest -m 'not benchmark'"
 benchmark = "pytest tests/test_benchmark.py --benchmark-only --benchmark-verbose"
 benchmark-save = {shell = "pdm run benchmark && python scripts/save_benchmark_summary.py"}
 benchmark-history = "python scripts/save_benchmark_summary.py history"
