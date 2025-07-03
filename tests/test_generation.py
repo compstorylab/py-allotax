@@ -7,12 +7,12 @@ from py_allotax.generate_svg import generate_svg
 
 def test_generation():
     generate_svg(
-        os.path.join("example_data", "boys_1968.json"),  # 1st
-        os.path.join("example_data", "boys_2018.json"),  # 2nd
+        os.path.join("example_data", "boys_1895.json"),  # 1st
+        os.path.join("example_data", "boys_1968.json"),  # 2nd
         os.path.join("tests", "test.pdf"),               # 3rd
         "0.17",                                          # 4th
-        "Baby boy names 1968",                           # 5th
-        "Baby boy names 2018",                           # 6th
+        "Baby boy names 1895",                           # 5th
+        "Baby boy names 1968",                           # 6th
         "pdf"                                            # 7th - desired_format
     )
 

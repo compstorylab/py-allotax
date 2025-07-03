@@ -8,7 +8,7 @@
   <i>Allotax icon created by Julia W. Zimmerman</i>
 </p>
 
-The `py-allotax` implements a python interface to the `allotaxonometer` library. This tool provides a way for users to input data and arguments and receive back a saved plot! The tool is designed to be used in a command line or in a python notebook in a few lines of code (see usage instructions at the bottom).
+The `py-allotax` implements a python interface to the `allotaxonometer-ui` library. This tool provides a way for users to input data and arguments and receive back a saved plot! The tool is designed to be used in a command line or in a python notebook in a few lines of code (see usage instructions at the bottom).
 
 
 <div style="clear: both;"></div>
@@ -43,8 +43,8 @@ Table of contents:
     ```
 
 
-> [!NOTE]
-> We use `puppeteer.js` under the hood, which is going to download compatible Chrome during installation.
+> Note:
+> We use `puppeteer.js` under the hood, which is going to download a compatible Chrome during installation.
 
 ## Usage instructions
 
@@ -84,7 +84,7 @@ to install all python dependencies.
 To test the package without building and installing it, `cd` to py-allotax, install the node modules, then run:
 ```
 pdm add -e . -dG dev
-pdm run test # benchmarks excluded 
+pdm run test # benchmarks excluded
 ```
 These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
 
@@ -148,13 +148,6 @@ Terminal says there is no `nvm` after installing it.
 Terminal says there is no `node` even after I have already run `py-allotax` methods.
 - This seems to happen when switching environments or changing branches. You can simply re-run the installs. You should already have `nvm` and be able to start from there.
 
-I am receiving this error: `AttributeError: 'ChromiumRemoteConnection' object has no attribute '_url’`.
-- One of secondary dependencies is `selenium`, and it seems to break if the version is higher than 4.25.0. Run `pip3 install selenium==4.25.0`.
-
-I am receiving an `npm` error regarding `canvas`, `pixman`, or other packages I do not recognize.
-- You may need `canvas` and its dependencies. Please follow [this guide](https://www.npmjs.com/package/canvas#compiling) to installing it based on your OS.
-
-
 <br>
 <br>
 
@@ -173,7 +166,7 @@ Users accessing these tools is our primary goal, so feel free to contact us by s
 
 ## Resources
 
-- [Allotaxonometer main package](https://github.com/jstonge/allotaxonometer)
+- [Allotaxonometer-ui main package](https://github.com/Vermont-Complex-Systems/allotaxonometer-ui)
 - [Allotaxonometer web app](https://allotax.vercel.app/)
 - The work and paper leading to these tools is [here](https://doi.org/10.1140/epjds/s13688-023-00400-x).
 - See the [allo diagram]() to understand the full tool ecosystem around the allotaxonometer (download and load in draw.io)
