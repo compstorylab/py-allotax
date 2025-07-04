@@ -115,6 +115,43 @@ How much data can I run in this tool?
 Will any data format work?
 - There are specific column/variable names, and the data must be in `.json` format. The column names and formats vary across a few of the allotaxonometer tools, so there is a data format conversion function in `utils.py` to go from `.csv` to `.json`. See `examples.ipynb` for how to convert your data from `.csv` to `.json`.
 
+I work in a high performance computing (HPC) environment (e.g., UVM's VACC) and the PDF won't render.
+- In a HPC env, we discovered that a conda environment won't be able to discover your chromium location---a requirement to render the graph in a PDF. We recommend these solutions: 1) working locally instead, 2) in the HPC environment, run `get_rtd` only to get results and work with the data, 3) use the graph option to get the HTML only because you can open these in your own browser and screenshot or print if few are needed, or 4) the advanced workaround instructions below (we do not recommend as a first resort because working with paths is messy).
+
+    <details>
+    <summary>Click for advanced workaround instructions to render PDFs in an HPC environment. Please note the default paths here may not be correct for your exact env and can require discovery. Get in touch if this is your only option.</summary>
+
+    - After following the normal installation steps, use the steps below, but amend the path for your username and your conda environment containing the py_allotax library.
+    1. Install this additional package in your env. This should let you do the convert data and RTD functions only **(you can stop here if PDF is unneeded)**.
+        ```
+        conda install -c conda-forge nodejs
+        ```
+    1. Get your py_allotax env location (paste it somewhere retrievable) then cd to it (Note: the example below utilizes miniconda):
+        ```
+        cd /user_path/miniconda3/envs/pyallotax/lib/python3.13/site-packages/py_allotax/
+        ```
+    1. Start by making a folder in this location:
+        ```
+        mkdir chrome
+        ```
+    1. Get the chromium executable location and copy its output (paste this path somewhere retrievable):
+        ```
+        node -e "console.log(require('puppeteer').executablePath())"
+        ```
+    1. Next steps need to be done carefully with your paths. This will copy the chromium files from its location into your py_allotax env location. The first path is the chromium location, and the second path if your py_allotax library location in your env:
+        1. ```scp -r /user_path/.cache/puppeteer/chrome /user_path/miniconda3/envs/pyallotax/lib/python3.13/site-packages/py_allotax/chrome```
+        1. ```scp -r /user_path/.cache/puppeteer/chrome-headless-shell /user_path/miniconda3/envs/pyallotax/lib/python3.13/site-packages/py_allotax/chrome```
+        1. ```chmod +x /user_path/miniconda3/envs/pyallotax/lib/python3.13/site-packages/py_allotax/chrome/chrome/linux-138.0.7204.49/chrome-linux64/chrome```
+        1. ```chmod +x /user_path_/miniconda3/envs/pyallotax/lib/python3.13/site-packages/py_allotax/chrome/chrome-headless-shell/linux-138.0.7204.49/chrome-headless-shell-linux64/chrome-headless-shell```
+
+    1. In your own script or python notebook, set this variable (replace with the location your copied the chromium location to within your py_allotax env)
+        ```
+        os.environ["PUPPETEER_EXECUTABLE_PATH"] = “/user_path/miniconda3/envs/pyallotax/lib/python3.13/site-packages/py_allotax/chrome/chrome/linux-138.0.7204.49/chrome-linux64/chrome”
+        ```
+
+    </details>
+
+
 I use Google colab or online-based coding environments only.
 - Currently, this tool's dependencies may be difficult to install in an online environment. We recommend using Python virtual environments or Anaconda to create and manage Python environments locally. See below some shell instructions to get started with a Python virtual environment.
 
