@@ -1,7 +1,7 @@
 {
   "type": "module",
   "dependencies": {
-    "allotaxonometer-ui": "^0.1.8",
+    "allotaxonometer-ui": "^0.1.12",
     "d3": "^7.9.0",
     "ds": "^2.0.2",
     "jsdom": "^25.0.1",

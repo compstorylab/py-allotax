@@ -1,6 +1,6 @@
 [project]
 name = "py-allotax"
-version = "1.0.3"
+version = "1.0.4"
 description = "Python implementation of allotaxonometer to produce static graphs."
 authors = [
     {name = "Computational StoryLab", email = "jonathanstonge7@gmail.com"},
