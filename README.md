@@ -122,12 +122,12 @@ Terminal says there is no `node` even after I have already run `py-allotax` meth
 - This seems to happen when switching environments or changing branches. You can simply re-run the installs. You should already have `nvm` and be able to start from there.
 
 I work in a high performance computing (HPC) environment (e.g., UVM's VACC) and the PDF won't render.
-- In a HPC env, we discovered that a conda environment won't be able to discover your chromium location---a requirement to render the graph in a PDF. We recommend these solutions: 1) working locally instead, 2) in the HPC environment, run `get_rtd` only to get results and work with the data, 3) use the graph option to get the HTML only because you can open these in your own browser and screenshot or print if few are needed, or 4) the advanced workaround instructions below (we do not recommend as a first resort because working with paths is messy).
+- In a HPC env, we discovered that a conda environment won't be able to discover your chromium location---a requirement to render the graph in a PDF. We recommend these solutions: 1) working locally instead, 2) in the HPC environment, run `get_rtd` only to get results and work with the data, 3) use the graph option to get the HTML only because you can open these in your own browser and screenshot or print if few are needed, or 4) the advanced workaround instructions below (we do not recommend as a first resort because the user will need to discover multiple paths).
 
     <details>
-    <summary>Click for advanced workaround instructions to render PDFs in an HPC environment. Please note the default paths here may not be correct for your exact env and can require discovery. Get in touch if this is your only option.</summary>
+    <summary>Click for advanced workaround instructions to render PDFs in an HPC environment. Please note the default paths here are examples and will not be correct for your exact env; user will need to discover their exact paths for their env, python version, and chromium version. Get in touch if this is your only option.</summary>
 
-    - After following the normal installation steps, use the steps below, but amend the path for your username and your conda environment containing the py_allotax library.
+    - **After following the normal installation steps, use the steps below, but amend the path for your username, conda environment containing the py_allotax library, python version, and chromium distribution.**
     1. Install this additional package in your env. This should let you do the convert data and RTD functions only **(you can stop here if PDF is unneeded)**.
         ```
         conda install -c conda-forge nodejs
