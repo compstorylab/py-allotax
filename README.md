@@ -175,6 +175,7 @@ I use Google colab or online-based coding environments only.
     <summary>Click for Python virtual environment instructions</summary>
 
     - Navigate to ('change directory' with `cd`) the folder where your coding or related work lives. These instructions will create a folder here containing your environment, `env`. Inside the folder, python’s virtual environment library, `venv`, will create files and download libraries. Each time you activate this environment, you have access to its libraries and can manage them.
+    - In your terminal, navigate to the location where your environment/folder will be stored (use `cd` to change directory/folder location):
         ```
         cd path-to-create-env
         ```
