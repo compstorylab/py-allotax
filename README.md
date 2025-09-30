@@ -26,11 +26,29 @@ Table of contents:
 
 ## Installation
 
+### Option 1: Using Conda (Recommended)
+
+If you use conda/mamba, this is the easiest installation method as it handles all dependencies automatically:
+
+```bash
+# Install from conda-forge (coming soon)
+conda install -c conda-forge py-allotax
+
+# Or build locally from source
+cd py-allotax
+conda build conda-recipe
+conda install --use-local py-allotax
+```
+
+The conda package automatically installs Node.js and runs `npm install` for you!
+
+### Option 2: Using pip
+
 From a local (your computer) coding environment:
 
 1. Requires `python3.11` or greater.
 
-1. If JavaScript tool installs are needed (never used or installed `npm`, `nvm`, `node`):
+1. If JavaScript tools are not installed (`npm`, `nvm`, `node`):
     1. [Install `nvm`](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating). `nvm` is a node version manager that streamlines installing the other 2.
     - Otherwise (not recommended): [steps to individually install `node` and `npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 1. Once you have `nvm`, install the latest of both `node` and `npm` with:
@@ -44,9 +62,20 @@ From a local (your computer) coding environment:
     pip3 install py-allotax
     ```
 
+1. Install Node.js dependencies (required):
+    ```bash
+    # Find where py-allotax was installed
+    python3 -c "import py_allotax; from pathlib import Path; print(Path(py_allotax.__file__).parent)"
+
+    # Navigate to that directory and run npm install
+    cd <path-from-above>
+    npm install
+    ```
+    This installs the required JavaScript dependencies including Puppeteer (which downloads a compatible Chrome browser).
+
 
 > Note:
-> We use `puppeteer.js` under the hood, which is going to download a compatible Chrome during installation.
+> With pip installation, you must manually run `npm install` in the package directory. If you skip this step, you'll get a clear error message with instructions when trying to use the package. **Using conda avoids this manual step entirely.**
 
 ## Usage instructions
 

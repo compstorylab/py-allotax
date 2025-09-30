@@ -1,0 +1,44 @@
+{% set name = "py-allotax" %}
+{% set version = "1.0.6" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  path: ..
+
+build:
+  number: 0
+
+requirements:
+  host:
+    - python >=3.11
+    - pip
+    - pdm-backend
+  run:
+    - python >=3.11
+    - pandas >=2.2.1
+    - numpy >=1.26
+    - nodejs >=18
+
+test:
+  imports:
+    - py_allotax
+  commands:
+    - python -c "import py_allotax; print('py-allotax installed successfully')"
+
+about:
+  home: https://github.com/compstorylab/py-allotax
+  license: MIT
+  license_file: LICENSE
+  summary: Python implementation of allotaxonometer to produce static graphs
+  description: |
+    py-allotax is a Python wrapper for the allotaxonometer-ui JavaScript library.
+    It allows users to generate allotaxonometry visualizations through Python,
+    outputting static PDFs, HTML files, or raw RTD data.
+  dev_url: https://github.com/compstorylab/py-allotax
+
+extra:
+  recipe-maintainers:
+    - compstorylab
