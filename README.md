@@ -193,6 +193,26 @@ I use Google colab or online-based coding environments only.
 Where do I find the output?
 - It is at the path you specified (argument provided) when you ran the `generate_svg`.
 
+
+How do I specify the alpha value infinity?
+- As the following string: "Infinity".
+
+
+Which alpha values should I use?
+- The publication for allotaxonometry recommends sweeping over this list of alphas:
+```
+alphas1 = [round(x/12,3) for x in range(0,19)]
+alphas2 = [2,3,5]
+alpha_list = [0] + alphas1 + alphas2 + ['Infinity']
+```
+
+
+I'm getting an error saying "Maximum call stack size exceeded":
+- This error means your data is too big for this tool. We recommend subsetting your data by counts > 10. You can do this in a pandas dataframe with this example:
+```
+df_subset = df[df['counts'] > 10].copy()
+```
+
 <br>
 <br>
 
@@ -211,6 +231,6 @@ Users accessing these tools is our primary goal, so feel free to contact us by s
 ## Resources
 
 - [Allotaxonometer-ui main package](https://github.com/Vermont-Complex-Systems/allotaxonometer-ui).
-- [Allotaxonometer web app](https://vermont-complex-systems.github.io/complex-stories/allotaxonometry) which replaces the [old webpage](https://allotax.vercel.app/).
+- [Allotaxonometer web app](https://complex-stories.uvm.edu/allotaxonometry) which replaces the [old webpage](https://allotax.vercel.app/).
 - The work and paper leading to these tools is [here](https://doi.org/10.1140/epjds/s13688-023-00400-x) with another paper describing the [allotaxonometer ecosystem of tools](https://arxiv.org/abs/2506.21808).
 
