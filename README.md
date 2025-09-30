@@ -26,6 +26,8 @@ Table of contents:
 
 ## Installation
 
+From a local (your computer) coding environment:
+
 1. Requires `python3.11` or greater.
 
 1. If JavaScript tool installs are needed (never used or installed `npm`, `nvm`, `node`):
