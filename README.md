@@ -83,7 +83,14 @@ to install all python dependencies.
 
 ### Testing
 
-To test the package without building and installing it, `cd` to py-allotax, install the node modules, then run:
+To test the package without building and installing it, you'll install nvm dependencies like normal, and manually install the node modules for this type of testing:
+```
+nvm install --lts
+cd src/py_allotax
+npm install # installs node modules
+cd ../..
+```
+Then run:
 ```
 pdm add -e . -dG dev
 pdm run test # benchmarks excluded
@@ -112,7 +119,13 @@ You should see a `.whl` file in the newly created `dist` directory.
 ## Frequent questions or issues
 
 How much data can I run in this tool?
-- The py-allotax supports approximately 2 GB of data. We recommend checking the size of your data files.
+- The py-allotax supports approximately 2 GB of data, but the time to create plots has varied by user. We recommend checking the size of your data files, and if plot generation time is underwhelming, cut rows starting at $n>10$.
+
+I'm getting an error saying "Maximum call stack size exceeded":
+- This error means your data is too big for this tool. We recommend subsetting your data by counts > 10. You can do this in a pandas dataframe with this example:
+```
+df_subset = df[df['counts'] > 10].copy()
+```
 
 Will any data format work?
 - There are specific column/variable names, and the data must be in `.json` format. The column names and formats vary across a few of the allotaxonometer tools, so there is a data format conversion function in `utils.py` to go from `.csv` to `.json`. See `examples.ipynb` for how to convert your data from `.csv` to `.json`.
@@ -209,12 +222,6 @@ alphas2 = [2,3,5]
 alpha_list = [0] + alphas1 + alphas2 + ['Infinity']
 ```
 
-
-I'm getting an error saying "Maximum call stack size exceeded":
-- This error means your data is too big for this tool. We recommend subsetting your data by counts > 10. You can do this in a pandas dataframe with this example:
-```
-df_subset = df[df['counts'] > 10].copy()
-```
 
 <br>
 <br>
