@@ -15,4 +15,6 @@ src/py_allotax/test.*
 example_charts/notebook_test.html
 example_charts/html_only_test.html
 example_charts/notebook_test.pdf
-example_charts/
+boys_1968.json
+boys_2018.json
+example_charts/boys_*
