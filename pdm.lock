@@ -5,10 +5,21 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:1d39d7871d7aa09c7183f7d9cefee85e9d0f8df94279e0893784b96cd46b8119"
+content_hash = "sha256:5dc7a71b5e1b07037c0b9c00b9a22225487dc490ddb1b890d4f8281c515ee3f2"
 
 [[metadata.targets]]
 requires_python = ">=3.11"
+
+[[package]]
+name = "allotax"
+version = "0.2.0"
+requires_python = ">=3.9"
+summary = "Fast allotaxonometer computation powered by Rust"
+groups = ["dev"]
+files = [
+    {file = "allotax-0.2.0-cp311-cp311-manylinux_2_34_x86_64.whl", hash = "sha256:dab73e6072b2aa350429fd2628adb90a3b319ad71cc74cbe25de04b7e7c93971"},
+    {file = "allotax-0.2.0-cp313-cp313-manylinux_2_34_x86_64.whl", hash = "sha256:097113619eec84e828c7af1df68701d6c762c79edaae266437a3a8139025e0b3"},
+]
 
 [[package]]
 name = "colorama"
