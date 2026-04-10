@@ -123,8 +123,8 @@ def convert_js_data(desired_format: str, path1: str, path2: str) -> None:
 
 
 def verify_input_data(datafile_1, datafile_2) -> None:
-    """Verifies the format of provided files match the required json format with
-    keys: ['types', 'counts', 'totalunique', 'probs'].
+    """Verifies the format of provided files match the required json format.
+    Minimum required keys: ['types', 'counts']. Optional: ['totalunique', 'probs'].
     """
     for file in [datafile_1, datafile_2]:
         # verify the data opens (otherwise return note about invalid json structure)
@@ -137,7 +137,7 @@ def verify_input_data(datafile_1, datafile_2) -> None:
                 + "a .json wherein the data is a list of dictionaries."
             )
         # verify the data has the required keys
-        if not all(k in data[0] for k in ["types", "counts", "totalunique", "probs"]):
+        if not all(k in data[0] for k in ["types", "counts"]):
             raise ValueError(
-                f"Data in {file} does not match the required format: ['types', 'counts', 'totalunique', 'probs']"
+                f"Data in {file} does not match the required format: must have at least ['types', 'counts']"
             )
