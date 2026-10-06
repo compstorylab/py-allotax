@@ -12,7 +12,7 @@ class TestGenerateSVGBenchmark:
         ("example_data/boys_1895.json", "example_data/boys_2018.json", "Small_vs_Large_1895_2018"),
         ("example_data/boys_1895.json", "example_data/boys_1968.json", "Small_vs_Medium_1895_1968"),
     ], ids=["Large files (1968+2018)", "Small vs Large (1895+2018)", "Small vs Medium (1895+1968)"])
-    def test_generate_svg_performance(self, benchmark, file1, file2, description, tmp_path):
+    def test_allotaxonograph_performance(self, benchmark, file1, file2, description, tmp_path):
         """Benchmark the script execution with different file combinations"""
         
         # Collect file metadata
@@ -32,8 +32,8 @@ class TestGenerateSVGBenchmark:
         output_file = tmp_path / f"test_{description}.pdf"
         
         args = [
-            "python", "src/py_allotax/generate_svg.py",
-            file1, file2, str(output_file), "0.17", 
+            "python", "-m", "py_allotax",
+            file1, file2, str(output_file), "0.17",
             "Boys-File1", "Boys-File2"
         ]
         

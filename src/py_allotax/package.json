@@ -3,9 +3,7 @@
   "dependencies": {
     "allotaxonometer-ui": "^0.2.2",
     "d3": "^7.9.0",
-    "ds": "^2.0.2",
-    "jsdom": "^25.0.1",
-    "nwsapi": "^2.2.13",
+    "dom-to-image-more": "^3.5.0",
     "puppeteer": "24.10.1",
     "svelte": "^5.55.3"
   }

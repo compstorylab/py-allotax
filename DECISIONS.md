@@ -1,6 +1,27 @@
 # Package decisions
 
-## Decision
+## Decision (July 2026): computation extracted to the Rust core
+
+Computation moved from the JS `allotaxonometer-ui` functions to the
+[allotax](https://pypi.org/project/allotax/) PyO3 bindings over
+[allotax-core](https://github.com/Vermont-Complex-Systems/allotaxonometer-core), the same Rust core the web app uses via WASM. The workflow is now:
+
+1. Python computes RTD, diamond counts, wordshift, and balance in-process via `allotax`.
+2. For `pdf`/`html`, Python passes the precomputed props to a render-only node script (`render.js`: Svelte SSR of the `Dashboard` + Puppeteer).
+3. For RTD-only usage, `allotax.rank_turbulence_divergence` is called directly — no JS runs at all (roughly 30x faster than the former subprocess round-trip, and usable in HPC/conda environments where chromium discovery fails).
+
+One source of truth for the math across web (WASM), Python, and any future
+bindings. The original mixed-approach decision below is kept for history.
+
+In 2.0 the API was renamed to domain terms and kept minimal: `allotaxonograph`
+(one call, data to figure; `pdf`/`svg`/`html`; without `output_file` it
+returns a figure that displays inline, with `.save()`, `.interactive()`, and
+`.plot_data` for reuse); RTD-only users call `allotax.rank_turbulence_divergence`
+directly with `as_system`. Compute and render remain separate
+steps internally, but are not public API. `generate_svg` remains as a
+deprecated alias.
+
+## Decision (original)
 Regarding the ideation below, we ended up going with the following workflow using a mixed Python and JavaScript approach:
 1. User provides 2 datasets and alpha.
 1. In JS, create a DOM.

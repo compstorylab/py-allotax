@@ -10,6 +10,8 @@
 
 The `py-allotax` implements a python interface to the `allotaxonometer-ui` library. This tool provides a way for users to input data and arguments and receive back a saved plot! The tool is designed to be used in a command line or in a python notebook in a few lines of code (see usage instructions at the bottom).
 
+All computation (rank-turbulence divergence, diamond counts, wordshift, balance) runs in-process through [allotax](https://pypi.org/project/allotax/), the Rust core shared with the allotaxonometer web app. JavaScript (`node` + `puppeteer`) is only needed to render the plot (`pdf`, `svg`, or `html`); RTD-only usage (calling `allotax.rank_turbulence_divergence` directly, see below) requires no JavaScript at all.
+
 
 <div style="clear: both;"></div>
 <br>
@@ -46,28 +48,77 @@ From a local (your computer) coding environment:
 
 
 > Note:
-> We use `puppeteer.js` under the hood, which is going to download a compatible Chrome during installation.
+> We use `puppeteer.js` under the hood. On your first plot render, the package runs `npm install` once (which also downloads a compatible Chrome) — this can take a few minutes. RTD-only usage (calling `allotax` directly) never needs this step.
 
 ## Usage instructions
 
 If working in a python notebook or script, you can install the package and use the function directly. Example data must be downloaded from the `example_data` directory to run the example below and those found in the `examples.ipynb`. [boys 2022](example_data/boys_2022.csv) and [boys 2023](example_data/boys_2023.json) are the examples used below.
 
 ```python
-import os
-from py_allotax.generate_svg import generate_svg
+from py_allotax import allotaxonograph
 
-data_path1 = os.path.join("example_data", "boys_2022.json")
-data_path2 = os.path.join("example_data", "boys_2023.json")
+allotaxonograph(
+    "example_data/boys_2022.json",
+    "example_data/boys_2023.json",
+    "0.17", "Boys 2022", "Boys 2023",
+    output_file="test.pdf",
+)
+```
 
-generate_svg(data_path1, data_path2, "test.pdf", "0.17", "Boys 2022", "Boys 2023")
+The output format follows the file extension: `.pdf` (also saves the intermediate HTML alongside), `.svg` (standalone vector file, same as the web app's "Download SVG"), or `.html` (pass `desired_format` to override). In a Jupyter notebook, omit `output_file` and the chart renders inline in the cell output as a static SVG (works in every frontend, including VS Code):
+
+```python
+fig = allotaxonograph(df1, df2, "0.17", "System 1", "System 2")  # displays inline
+fig.save("chart.pdf")           # optionally also write any format
+fig.interactive()               # interactive Dashboard (hover tooltips), loaded from esm.sh
+fig.interactive().save_html("chart_interactive.html")  # or save it and open in a browser
+```
+
+The interactive view needs internet at viewing time and a frontend that runs scripts in outputs (JupyterLab, classic notebook). Sandboxed renderers such as VS Code's may block the CDN script — there, use `save_html` and open the file in a browser.
+
+Each system's data can be a path to a `.json` file (a list of records with `types` and `counts` keys), a pandas DataFrame with `types` and `counts` columns, a list of records, or a columnar dict — so `.csv` data is just `pd.read_csv("data.csv")` passed directly:
+
+```python
+import pandas as pd
+from py_allotax import allotaxonograph
+
+df1, df2 = pd.read_csv("sys1.csv"), pd.read_csv("sys2.csv")
+allotaxonograph(df1, df2, "0.17", "System 1", "System 2", output_file="test.svg")
+```
+
+To render the same comparison to several formats, keep the figure and call `.save()` repeatedly — computation happens only once:
+
+```python
+fig = allotaxonograph(df1, df2, "0.17", "System 1", "System 2")
+fig.save("test.pdf")
+fig.save("test.svg")
+fig.plot_data  # the raw pieces (diamond_counts, wordshift, balance, ...) for custom plotting
+```
+
+For RTD data without a plot (no `node`/chromium needed — ideal for HPC), call the [allotax](https://pypi.org/project/allotax/) bindings directly — they accept anything with `types` and `counts` columns/keys, so DataFrames work as-is:
+
+```python
+import allotax
+
+result = allotax.rank_turbulence_divergence(df1, df2, 0.17)
+result["normalization"], result["delta_sum"]
+words_df = pd.DataFrame(result["wordshift"])  # type, rank1, rank2, divergence (signed)
+```
+
+(Only for a `.json` file path or a list of records do you need to wrap the input: `as_system("data.json")`.) `allotax` also provides `rank_turbulence_divergence_multi_alpha` for sweeping many alphas in parallel — see [its docs](https://pypi.org/project/allotax/).
+
+There is also a command line interface (installed with the package):
+
+```bash
+py-allotax data1.json data2.json test.pdf "0.17" "System 1" "System 2" --desired_format pdf
 ```
 
 If running the example, you can check your result against the [example output](example_charts).
 
-To get help, you can run `?py_allotax.generate_svg.generate_svg` in a notebook cell to see argument descriptions.
+To get help, you can run `?py_allotax.allotaxonograph` in a notebook cell to see argument descriptions.
 
-> [!WARNING]
-> Your own data must be in the `.json` format (see json examples in `example_data/`). If you have a `.csv` file, you can convert it to `.json` using `utils.convert_csv_data` (see `examples.ipynb`).
+> [!NOTE]
+> `generate_svg` (the pre-2.0 name) still works as a deprecated alias for `allotaxonograph`.
 
 
 ## Developer Notes
@@ -106,15 +157,12 @@ pdm run benchmark
 These commands will add the package in editable mode as a development dependency then execute the tests written in the `tests` dir.
 
 ### Package Build
-Clone this repo and install the requirements:
 
 ```bash
-git clone https://github.com/compstorylab/py-allotax.git &&
-cd py-allotax &&
-./scripts/build.sh
+pdm build
 ```
 
-You should see a `.whl` file in the newly created `dist` directory.
+You should see a `.whl` file in the `dist` directory. The wheel is pure Python — JS dependencies are not bundled; they install on the user's machine on first render.
 
 ## Frequent questions or issues
 
@@ -128,7 +176,7 @@ df_subset = df[df['counts'] > 10].copy()
 ```
 
 Will any data format work?
-- There are specific column/variable names, and the data must be in `.json` format. The column names and formats vary across a few of the allotaxonometer tools, so there is a data format conversion function in `utils.py` to go from `.csv` to `.json`. See `examples.ipynb` for how to convert your data from `.csv` to `.json`.
+- Each system needs `types` and `counts`. You can pass a `.json` file (list of records), a pandas DataFrame, a list of records, or a columnar dict — no file conversion needed (e.g., `pd.read_csv(...)` output works directly).
 
 Terminal says there is no `nvm` after installing it.
 - Restart your terminal to activate it.
@@ -137,7 +185,7 @@ Terminal says there is no `node` even after I have already run `py-allotax` meth
 - This seems to happen when switching environments or changing branches. You can simply re-run the installs. You should already have `nvm` and be able to start from there.
 
 I work in a high performance computing (HPC) environment (e.g., UVM's VACC) and the PDF won't render.
-- In a HPC env, we discovered that a conda environment won't be able to discover your chromium location---a requirement to render the graph in a PDF. We recommend these solutions: 1) working locally instead, 2) in the HPC environment, run `get_rtd` only to get results and work with the data, 3) use the graph option to get the HTML only because you can open these in your own browser and screenshot or print if few are needed, or 4) the advanced workaround instructions below (we do not recommend as a first resort because the user will need to discover multiple paths).
+- In a HPC env, we discovered that a conda environment won't be able to discover your chromium location---a requirement to render the graph in a PDF or SVG. We recommend these solutions: 1) working locally instead, 2) in the HPC environment, call `allotax.rank_turbulence_divergence` directly (see usage instructions), which runs entirely in Python (no `node`, `npm`, or chromium needed) and lets you work with the data directly, 3) use the graph option to get the HTML only because you can open these in your own browser and screenshot or print if few are needed, or 4) the advanced workaround instructions below (we do not recommend as a first resort because the user will need to discover multiple paths).
 
     <details>
     <summary>Click for advanced workaround instructions to render PDFs in an HPC environment. Please note the default paths here are examples and will not be correct for your exact env; user will need to discover their exact paths for their env, python version, and chromium version. Get in touch if this is your only option.</summary>
@@ -207,7 +255,7 @@ I use Google colab or online-based coding environments only.
 
 
 Where do I find the output?
-- It is at the path you specified (argument provided) when you ran the `generate_svg`.
+- It is at the path you specified (argument provided) when you ran the `allotaxonograph`.
 
 
 How do I specify the alpha value infinity?
@@ -234,7 +282,7 @@ Users accessing these tools is our primary goal, so feel free to contact us by s
 
 ## Repo structure notes
 - Inside `src`:
-    - `generate_svg.py` is the main script to generate the pdf. You can run this from command line or in a notebook.
+    - `allotaxonograph.py` is the main module to generate the plots. You can run this from command line or in a notebook.
 - Outside `src`: you can download `example_data` and `example_charts` and a notebook to run pre-constructed examples that use the library.
 
 

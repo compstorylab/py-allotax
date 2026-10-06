@@ -1,14 +1,17 @@
 [project]
 name = "py-allotax"
-version = "1.0.8"
+version = "2.0.0"
 description = "Python implementation of allotaxonometer to produce static graphs."
 authors = [
     {name = "Computational StoryLab", email = "jonathanstonge7@gmail.com"},
 ]
-dependencies = ["pandas>=2.2.1"]
+dependencies = ["pandas>=2.2.1", "allotax>=0.3.2"]
 requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
+
+[project.scripts]
+py-allotax = "py_allotax.allotaxonograph:main"
 
 [build-system]
 requires = ["pdm-backend"]
@@ -17,6 +20,10 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+
+[tool.pdm.build]
+# JS deps are installed on first render (npm install), not bundled in the wheel.
+excludes = ["src/py_allotax/node_modules", "**/.DS_Store"]
 
 # Benchmark-specific settings
 [tool.pytest-benchmark]
